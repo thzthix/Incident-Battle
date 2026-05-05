@@ -1,0 +1,10 @@
+{
+  "name": "Interview Battle",
+  "short_name": "Interview Battle",
+  "description": "Pokemon battle parody web app for practicing CS and scenario interview questions.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101418",
+  "theme_color": "#101418"
+}

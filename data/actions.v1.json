@@ -1,0 +1,128 @@
+[
+  {
+    "id": "scope-check",
+    "category": "recon",
+    "label": "범위 파악",
+    "battleFlavorText": "사용자 영향과 실패 범위를 먼저 읽는다.",
+    "intentTags": ["impact", "triage", "blast-radius"],
+    "strongAgainstTags": ["pressure", "impact", "spread"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "change-trace",
+    "category": "recon",
+    "label": "변경 추적",
+    "battleFlavorText": "최근 배포와 설정 변경을 대조한다.",
+    "intentTags": ["deploy", "config", "correlation"],
+    "strongAgainstTags": ["recent-change"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "observability-check",
+    "category": "recon",
+    "label": "관측 세우기",
+    "battleFlavorText": "로그, 메트릭, 알람을 다시 세운다.",
+    "intentTags": ["logs", "metrics", "alerts"],
+    "strongAgainstTags": ["low-observability", "uncertainty"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "dependency-check",
+    "category": "recon",
+    "label": "의존성 점검",
+    "battleFlavorText": "외부 의존성과 내부 병목을 분리한다.",
+    "intentTags": ["dependency", "db", "network", "third-party"],
+    "strongAgainstTags": ["dependency", "storage"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "containment",
+    "category": "mitigation",
+    "label": "우선 차단",
+    "battleFlavorText": "확산을 막기 위해 위험 구간을 제한한다.",
+    "intentTags": ["containment", "feature-flag", "disable"],
+    "strongAgainstTags": ["spread"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "fallback",
+    "category": "mitigation",
+    "label": "즉시 우회",
+    "battleFlavorText": "대체 경로나 degraded mode로 피해를 줄인다.",
+    "intentTags": ["fallback", "degraded-mode", "alternate-path"],
+    "strongAgainstTags": ["dependency", "impact", "escape-route"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "rollback",
+    "category": "mitigation",
+    "label": "되돌리기",
+    "battleFlavorText": "롤백이나 설정 복원으로 빠른 복구를 노린다.",
+    "intentTags": ["rollback", "revert", "release"],
+    "strongAgainstTags": ["recent-change", "recovery-window"],
+    "weakAgainstTags": ["dependency"]
+  },
+  {
+    "id": "load-balance",
+    "category": "mitigation",
+    "label": "부하 분산",
+    "battleFlavorText": "rate limit, queue, cache로 부하를 흘린다.",
+    "intentTags": ["rate-limit", "queue", "cache", "scaling"],
+    "strongAgainstTags": ["overload", "buffer"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "priority-call",
+    "category": "judgment",
+    "label": "우선순위 선언",
+    "battleFlavorText": "무엇부터 할지 먼저 명확히 말한다.",
+    "intentTags": ["priority", "sequence", "decision"],
+    "strongAgainstTags": ["pressure", "time-window"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "state-assumption",
+    "category": "judgment",
+    "label": "가정 명시",
+    "battleFlavorText": "모르는 조건과 분기를 솔직하게 세운다.",
+    "intentTags": ["assumption", "branching", "uncertainty"],
+    "strongAgainstTags": ["uncertainty", "low-observability"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "cause-split",
+    "category": "judgment",
+    "label": "원인 분리",
+    "battleFlavorText": "앱, 인프라, 외부 의존성을 구분해서 본다.",
+    "intentTags": ["classification", "hypothesis", "separation"],
+    "strongAgainstTags": ["storage", "dependency", "hypothesis-reset"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "status-share",
+    "category": "communication",
+    "label": "상황 공유",
+    "battleFlavorText": "영향, 현재 조치, 다음 단계를 짧게 공유한다.",
+    "intentTags": ["communication", "stakeholder", "customer-impact"],
+    "strongAgainstTags": ["impact", "customer", "pressure"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "call-support",
+    "category": "communication",
+    "label": "협업 호출",
+    "battleFlavorText": "관련 팀과 외부 파트너를 병렬로 움직인다.",
+    "intentTags": ["collaboration", "escalation", "partner"],
+    "strongAgainstTags": ["dependency", "queue"],
+    "weakAgainstTags": []
+  },
+  {
+    "id": "postmortem",
+    "category": "communication",
+    "label": "사후 정리",
+    "battleFlavorText": "재발 방지와 검증 계획을 정리한다.",
+    "intentTags": ["prevention", "monitoring", "follow-up"],
+    "strongAgainstTags": [],
+    "weakAgainstTags": []
+  }
+]

@@ -1,0 +1,576 @@
+[
+  {
+    "id": "deploy-login-failure-01",
+    "title": "배포 직후 로그인 실패",
+    "archetype": "deploy-regression",
+    "companyFlavor": "fintech-bank",
+    "introText": "토스뱅크풍 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "배포 10분 후 로그인 실패율이 급증했습니다.",
+    "startingStateIds": ["recent-change", "pressure"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["변경 흔적이 진하게 남아 있다!", "지금은 빠른 우선순위 판단이 중요해 보인다."],
+        "question": "이 상황에서 가장 먼저 무엇을 확인하시겠습니까?",
+        "candidateActionIds": ["scope-check", "change-trace", "priority-call", "observability-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["사용자 영향과 범위를 먼저 본다", "최근 배포와 시점 상관관계를 확인한다"],
+        "commonMistakes": ["근거 없이 바로 롤백만 말한다", "영향도 언급 없이 코드 디버깅으로 들어간다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["로그인이 핵심 흐름이라 급한 불이 번지고 있다!"],
+        "question": "배포 직후부터 에러가 치솟는 것이 확인되었습니다. 이제 어떤 대응을 하시겠습니까?",
+        "candidateActionIds": ["rollback", "fallback", "status-share", "cause-split"],
+        "revealStateIds": ["critical-impact", "recovery-window"],
+        "idealReasoningPath": ["복구 우선 여부를 판단한다", "안전하면 롤백이나 기능 차단을 검토한다"],
+        "commonMistakes": ["완화보다 근본 원인 분석을 먼저 길게 설명한다", "복구 후 검증 계획이 없다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["서비스가 어느 정도 진정되었다.", "이제 검증과 재발 방지를 정리할 차례다."],
+        "question": "복구 이후 어떤 검증과 재발 방지 조치를 말하시겠습니까?",
+        "candidateActionIds": ["status-share", "postmortem", "observability-check", "change-trace"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["회복 지표를 확인한다", "안전한 배포와 모니터링 개선을 제안한다"],
+        "commonMistakes": ["복구 확인 없이 회고만 말한다", "예방책이 추상적이다"]
+      }
+    ]
+  },
+  {
+    "id": "traffic-spike-campaign-01",
+    "title": "마케팅 푸시 후 트래픽 급증",
+    "archetype": "traffic-spike",
+    "companyFlavor": "commerce",
+    "introText": "프로모션 시즌 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "캠페인 직후 트래픽이 평소의 8배로 뛰었습니다.",
+    "startingStateIds": ["overload", "critical-impact"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["전장에 과부하가 몰아친다!", "사용자 체감이 빠르게 나빠지고 있다."],
+        "question": "무엇부터 보고 우선순위를 잡으시겠습니까?",
+        "candidateActionIds": ["scope-check", "load-balance", "priority-call", "cause-split"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["가장 영향 큰 경로를 먼저 확인한다", "병목 후보를 넓게 분류한다"],
+        "commonMistakes": ["무작정 scale out만 외친다", "핵심 사용자 경로를 구분하지 않는다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["한 서비스에서 CPU와 에러율이 같이 오르고 있다."],
+        "question": "지금 어떤 완화나 분리 대응을 하시겠습니까?",
+        "candidateActionIds": ["load-balance", "containment", "fallback", "status-share"],
+        "revealStateIds": ["spread", "buffer"],
+        "idealReasoningPath": ["피해를 줄이는 완화를 먼저 적용한다", "핫스팟을 좁히고 확산을 막는다"],
+        "commonMistakes": ["지표 확인 없이 서비스 전체를 막자고 한다", "검증 포인트가 없다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["트래픽은 안정세로 들어오고 있다."],
+        "question": "다음 이벤트 전에 무엇을 준비하시겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "status-share", "load-balance"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["복구 확인", "용량 계획과 부하 테스트 제안", "완화 정책 재설계"],
+        "commonMistakes": ["근본 병목을 특정하지 않고 인프라 증설만 말한다"]
+      }
+    ]
+  },
+  {
+    "id": "payment-timeout-peak-01",
+    "title": "결제 요청 타임아웃",
+    "archetype": "payment-failure",
+    "companyFlavor": "fintech-bank",
+    "introText": "결제 도메인 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "피크 시간대 결제 요청이 타임아웃되고 있습니다.",
+    "startingStateIds": ["critical-impact", "dependency"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["급한 불이 번지고 있다!", "묶인 회선 때문에 판단이 쉽지 않다."],
+        "question": "가장 먼저 어떤 관점으로 상황을 정리하시겠습니까?",
+        "candidateActionIds": ["scope-check", "dependency-check", "priority-call", "status-share"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["결제 성공률과 고객 영향을 먼저 본다", "외부 의존성과 내부 지연을 분리한다"],
+        "commonMistakes": ["코드 레벨 원인만 바로 추정한다", "중복 결제와 정합성 위험을 말하지 않는다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["외부 게이트웨이 응답도 느리고 DB 쓰기도 지연되고 있다."],
+        "question": "이제 어떤 대응으로 피해를 줄이시겠습니까?",
+        "candidateActionIds": ["fallback", "containment", "call-support", "cause-split"],
+        "revealStateIds": ["storage", "uncertainty"],
+        "idealReasoningPath": ["정확성과 피해 최소화를 같이 본다", "우회나 제한, 파트너 협업을 병행한다"],
+        "commonMistakes": ["빠른 복구만 강조하고 데이터 정합성을 빼먹는다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["결제가 부분적으로 안정되기 시작했다."],
+        "question": "복구 이후 어떤 검증과 후속 대응을 하시겠습니까?",
+        "candidateActionIds": ["status-share", "postmortem", "observability-check", "call-support"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["누락이나 중복 결제를 검증한다", "고객 안내와 예방 계획을 같이 제시한다"],
+        "commonMistakes": ["고객 신뢰 관점을 언급하지 않는다"]
+      }
+    ]
+  },
+  {
+    "id": "third-party-api-failure-01",
+    "title": "외부 API 의존 장애",
+    "archetype": "third-party",
+    "companyFlavor": "saas",
+    "introText": "외부 연동 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "파트너 API 실패가 간헐적으로 발생하고 있습니다.",
+    "startingStateIds": ["dependency", "uncertainty"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["묶인 회선 때문에 움직임이 제한된다!", "조건도 아직 완전히 분명하지 않다."],
+        "question": "무엇을 먼저 확인하시겠습니까?",
+        "candidateActionIds": ["dependency-check", "scope-check", "state-assumption", "status-share"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["외부 장애인지 먼저 분리한다", "영향 범위를 빠르게 파악한다"],
+        "commonMistakes": ["외부 파트너를 고쳐야 한다고만 말한다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["우리 시스템 바깥에서 5xx가 반복되고 있다."],
+        "question": "우리 쪽에서 지금 할 수 있는 최선의 대응은 무엇입니까?",
+        "candidateActionIds": ["fallback", "containment", "call-support", "priority-call"],
+        "revealStateIds": ["escape-route"],
+        "idealReasoningPath": ["격리와 graceful degradation을 말한다", "외부사 협업을 병렬로 진행한다"],
+        "commonMistakes": ["대체 경로를 전혀 언급하지 않는다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["외부 상태가 조금씩 회복되고 있다."],
+        "question": "앞으로 이 의존성 리스크를 줄이려면 무엇을 하시겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "call-support", "fallback"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["회복 검증", "circuit breaker나 fallback 강화", "SLA와 모니터링 정비"],
+        "commonMistakes": ["예방책이 막연하다"]
+      }
+    ]
+  },
+  {
+    "id": "db-read-slowdown-01",
+    "title": "피크 타임 DB 지연",
+    "archetype": "database-bottleneck",
+    "companyFlavor": "commerce",
+    "introText": "데이터 계층 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "응답 시간이 늘고 DB 읽기 지연이 높아졌습니다.",
+    "startingStateIds": ["storage", "overload"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["느린 저장소가 발목을 잡는다!", "과부하가 함께 밀려오고 있다."],
+        "question": "무엇부터 확인해 병목을 좁히시겠습니까?",
+        "candidateActionIds": ["scope-check", "dependency-check", "cause-split", "observability-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["영향 기능을 좁힌다", "DB가 실제 병목인지 확인한다"],
+        "commonMistakes": ["바로 DB 증설만 제안한다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["특정 엔드포인트에서 비싼 쿼리가 반복되고 있다."],
+        "question": "지금 어떤 대응이 가장 현실적입니까?",
+        "candidateActionIds": ["load-balance", "fallback", "containment", "status-share"],
+        "revealStateIds": ["buffer"],
+        "idealReasoningPath": ["핫스팟을 제한하거나 우회한다", "캐시나 완충 자원을 쓴다"],
+        "commonMistakes": ["핫스팟 분리 없이 시스템 전체 조치를 말한다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["응답 시간이 안정권으로 돌아오고 있다."],
+        "question": "재발 방지를 위해 어떤 개선을 제안하시겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "dependency-check", "status-share"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["슬로우 쿼리와 캐시 전략 개선", "검증 가능한 모니터링 추가"],
+        "commonMistakes": ["개선안이 추상적이다"]
+      }
+    ]
+  },
+  {
+    "id": "cache-stale-data-01",
+    "title": "캐시 불일치로 인한 데이터 혼선",
+    "archetype": "cache-consistency",
+    "companyFlavor": "banking",
+    "introText": "신뢰성 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "배포 후 일부 사용자에게 오래된 데이터가 보입니다.",
+    "startingStateIds": ["recent-change", "critical-impact"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["변경 흔적과 급한 불이 동시에 보인다."],
+        "question": "무엇을 먼저 확인하시겠습니까?",
+        "candidateActionIds": ["scope-check", "change-trace", "observability-check", "priority-call"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["영향 범위와 데이터 심각도를 정의한다", "배포와 캐시 연관성을 본다"],
+        "commonMistakes": ["단순 UI 버그 취급", "정합성 리스크 무시"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["캐시 무효화가 정상 동작하지 않고 있다."],
+        "question": "지금 어떤 안전한 조치를 취하시겠습니까?",
+        "candidateActionIds": ["fallback", "containment", "rollback", "status-share"],
+        "revealStateIds": ["recovery-window"],
+        "idealReasoningPath": ["일관성이 우선인 모드로 전환한다", "필요 시 롤백이나 우회를 검토한다"],
+        "commonMistakes": ["정확성보다 속도를 우선시한다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["데이터는 점차 정상으로 수렴하고 있다."],
+        "question": "신뢰 회복과 재발 방지를 위해 무엇을 말하시겠습니까?",
+        "candidateActionIds": ["status-share", "postmortem", "observability-check", "change-trace"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["정확성 검증", "감사 및 테스트 강화", "캐시 정책 개선"],
+        "commonMistakes": ["검증 계획 없이 회고만 말한다"]
+      }
+    ]
+  },
+  {
+    "id": "queue-backlog-01",
+    "title": "메시지 큐 적체",
+    "archetype": "async-backlog",
+    "companyFlavor": "saas",
+    "introText": "백그라운드 처리 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "백그라운드 큐가 빠르게 쌓이며 알림이 지연되고 있습니다.",
+    "startingStateIds": ["queue", "overload"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["대기열 정체가 길어지고 있다!", "과부하도 함께 밀려온다."],
+        "question": "무엇부터 구분하시겠습니까?",
+        "candidateActionIds": ["scope-check", "priority-call", "cause-split", "dependency-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["임계 업무와 비임계 업무 분리", "producer/consumer imbalance 확인"],
+        "commonMistakes": ["큐 증가량만 보고 사용자 영향 설명이 없다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["최근 설정 변경 후 consumer 처리량이 떨어졌다."],
+        "question": "지금 어떤 회복 조치를 취하시겠습니까?",
+        "candidateActionIds": ["change-trace", "load-balance", "call-support", "containment"],
+        "revealStateIds": ["recent-change"],
+        "idealReasoningPath": ["설정 변경 확인", "consumer 확장 또는 저우선 작업 제한"],
+        "commonMistakes": ["정합성 위험이나 중복 처리 위험을 빼먹는다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["백로그는 천천히 줄어들고 있다."],
+        "question": "어떤 예방책을 제안하시겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "status-share", "load-balance"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["queue observability", "idempotency", "capacity guardrail"],
+        "commonMistakes": ["원인과 예방의 연결이 약하다"]
+      }
+    ]
+  },
+  {
+    "id": "search-index-lag-01",
+    "title": "검색 인덱스 지연",
+    "archetype": "indexing-delay",
+    "companyFlavor": "content-platform",
+    "introText": "검색 품질 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "새로 업로드된 콘텐츠가 검색에 바로 보이지 않습니다.",
+    "startingStateIds": ["uncertainty", "queue"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["조건이 아직 모호하다.", "대기열 정체도 의심된다."],
+        "question": "어떤 사실부터 구분하시겠습니까?",
+        "candidateActionIds": ["scope-check", "state-assumption", "dependency-check", "observability-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["데이터 손실인지 discoverability 지연인지 구분한다"],
+        "commonMistakes": ["증거 없이 데이터 유실로 단정한다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["인덱싱 파이프라인이 지연되고 있지만 업로드 자체는 성공하고 있다."],
+        "question": "지금 어떤 대응을 하시겠습니까?",
+        "candidateActionIds": ["status-share", "call-support", "load-balance", "priority-call"],
+        "revealStateIds": ["buffer"],
+        "idealReasoningPath": ["심각도를 비례적으로 판단", "기대치 관리와 파이프라인 회복 병행"],
+        "commonMistakes": ["전체 서비스 장애처럼 과잉 대응"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["인덱스 지연은 해소되고 있다."],
+        "question": "무엇을 개선해 다음에는 더 빨리 감지하시겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "status-share", "dependency-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["index lag SLO와 모니터링 추가", "보조 기능 심각도 판단 기준 명시"],
+        "commonMistakes": ["핵심 흐름과 보조 흐름 구분이 없다"]
+      }
+    ]
+  },
+  {
+    "id": "abuse-spike-rate-limit-01",
+    "title": "비정상 요청 급증과 보호 부재",
+    "archetype": "abuse-traffic",
+    "companyFlavor": "saas",
+    "introText": "보호 체계 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "자동화된 요청이 급증해 서비스가 느려지고 있습니다.",
+    "startingStateIds": ["overload", "spread"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["과부하와 확산 조짐이 동시에 보인다."],
+        "question": "가장 먼저 어떤 대응 원칙을 세우시겠습니까?",
+        "candidateActionIds": ["priority-call", "scope-check", "containment", "observability-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["좋은 사용자 보호를 먼저 말한다", "정상 트래픽과 비정상 트래픽을 분리한다"],
+        "commonMistakes": ["모든 트래픽을 동일하게 다룬다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["한 엔드포인트로 비정상 요청이 몰리고 있다."],
+        "question": "이제 어떤 기술적 조치를 우선하시겠습니까?",
+        "candidateActionIds": ["containment", "load-balance", "status-share", "call-support"],
+        "revealStateIds": ["pressure"],
+        "idealReasoningPath": ["rate limit, block, challenge flow", "정상 사용자 영향 최소화"],
+        "commonMistakes": ["보호보다 디버깅을 먼저 길게 말한다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["핵심 기능은 다시 버티기 시작했다."],
+        "question": "이후 어떤 보호 체계를 보강하시겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "status-share", "call-support"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["WAF, rate limit, false positive monitoring", "운영 룰 정비"],
+        "commonMistakes": ["합법 사용자 피해를 고려하지 않는다"]
+      }
+    ]
+  },
+  {
+    "id": "replica-lag-read-staleness-01",
+    "title": "레플리카 지연으로 인한 오래된 조회",
+    "archetype": "replica-lag",
+    "companyFlavor": "banking",
+    "introText": "일관성 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "변경 직후 일부 사용자가 오래된 데이터를 보고 있습니다.",
+    "startingStateIds": ["storage", "uncertainty"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["느린 저장소와 흔들기가 동시에 보인다."],
+        "question": "무엇을 먼저 확인해 문제의 성격을 정의하시겠습니까?",
+        "candidateActionIds": ["scope-check", "dependency-check", "state-assumption", "cause-split"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["일부 stale read인지 전체 장애인지 구분", "feature criticality 확인"],
+        "commonMistakes": ["그냥 DB 느림으로만 단순화한다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["조회가 지연된 레플리카에서 계속 나가고 있다."],
+        "question": "지금 어떤 우회나 완화가 적절합니까?",
+        "candidateActionIds": ["fallback", "containment", "status-share", "dependency-check"],
+        "revealStateIds": ["buffer"],
+        "idealReasoningPath": ["중요 조회를 primary나 안전 경로로 돌린다", "영향 기능에 따라 정책을 다르게 본다"],
+        "commonMistakes": ["읽기-쓰기 일관성 모델을 전혀 언급하지 않는다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["조회 데이터가 서서히 정상화되고 있다."],
+        "question": "미래에는 이런 일관성 혼선을 어떻게 줄이시겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "status-share", "dependency-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["lag monitoring", "feature별 consistency policy", "critical read routing"],
+        "commonMistakes": ["예방보다 인프라 증설만 말한다"]
+      }
+    ]
+  },
+  {
+    "id": "payment-postprocess-queue-01",
+    "title": "결제 후처리 큐 적체와 중복 리스크",
+    "archetype": "async-postprocess",
+    "companyFlavor": "fintech-bank",
+    "introText": "정산 파이프라인 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "결제 승인은 성공하지만 영수증과 포인트 적립이 늦어지고 있습니다.",
+    "startingStateIds": ["queue", "critical-impact"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["대기열 정체가 길어지고 있다!", "결제 후 신뢰가 흔들리기 시작한다."],
+        "question": "이 상황에서 가장 먼저 무엇을 구분하시겠습니까?",
+        "candidateActionIds": ["scope-check", "priority-call", "cause-split", "dependency-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["결제 승인과 후처리 실패를 분리한다", "영향 범위와 고객 위험을 먼저 정의한다"],
+        "commonMistakes": ["결제 자체 실패로 단정한다", "중복 처리 가능성을 언급하지 않는다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["consumer lag와 DLQ 유입이 함께 늘고 있다."],
+        "question": "지금 어떤 회복 조치와 보호 조치를 함께 하시겠습니까?",
+        "candidateActionIds": ["containment", "load-balance", "status-share", "call-support"],
+        "revealStateIds": ["pressure", "follow-up"],
+        "idealReasoningPath": ["임계 후처리와 비임계 후처리를 분리한다", "재처리 전 멱등성과 중복 위험을 먼저 본다"],
+        "commonMistakes": ["큐를 무작정 다시 흘린다", "재처리 안전장치 없이 속도만 올리려 한다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["백로그는 줄고 있지만 정합성 검증이 남아 있다."],
+        "question": "복구 이후 어떤 검증과 예방책을 말하시겠습니까?",
+        "candidateActionIds": ["observability-check", "postmortem", "status-share", "call-support"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["중복 적립과 누락 건수를 검증한다", "멱등성 키, 재처리 가드, lag 알람을 강화한다"],
+        "commonMistakes": ["처리량 개선만 말하고 정합성 확인을 빼먹는다"]
+      }
+    ]
+  },
+  {
+    "id": "retry-storm-third-party-01",
+    "title": "외부 API 재시도 폭주",
+    "archetype": "retry-storm",
+    "companyFlavor": "saas",
+    "introText": "회복 탄력성 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "외부 API 응답이 느려진 뒤 우리 서비스의 대기 시간도 빠르게 늘고 있습니다.",
+    "startingStateIds": ["dependency", "overload"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["묶인 회선이 흔들린다!", "과부하가 겉으로는 아직 작아 보인다."],
+        "question": "이 상황에서 무엇을 먼저 확인해 원인을 분리하시겠습니까?",
+        "candidateActionIds": ["dependency-check", "scope-check", "cause-split", "observability-check"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["외부 지연과 내부 재시도 증폭을 함께 본다", "영향 흐름과 풀 고갈 신호를 분리한다"],
+        "commonMistakes": ["외부 장애로만 단순화한다", "재시도 정책을 확인하지 않는다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["재시도 횟수와 큐 유입량이 같이 커지고 있다."],
+        "question": "피해를 키우지 않으면서 지금 무엇을 조정하시겠습니까?",
+        "candidateActionIds": ["containment", "fallback", "load-balance", "call-support"],
+        "revealStateIds": ["spread", "buffer"],
+        "idealReasoningPath": ["무제한 재시도를 줄이고 degraded mode를 건다", "회로 차단과 완충 전략을 함께 말한다"],
+        "commonMistakes": ["재시도를 더 늘린다", "정상 트래픽과 비정상 재시도를 구분하지 않는다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["의존성은 회복 중이지만 내부 여진이 남아 있다."],
+        "question": "다음에는 이런 증폭을 어떻게 막겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "fallback", "status-share"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["backoff와 jitter, circuit breaker, retry budget을 제안한다", "고객 영향 관점 알람을 추가한다"],
+        "commonMistakes": ["timeout만 줄이면 된다고 본다"]
+      }
+    ]
+  },
+  {
+    "id": "deploy-db-lockwait-01",
+    "title": "배포 직후 DB 락 대기",
+    "archetype": "deploy-db-lock",
+    "companyFlavor": "fintech-bank",
+    "introText": "릴리즈 검증 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "배포 직후 일부 쓰기 API만 급격히 느려지고 DB lock wait이 보입니다.",
+    "startingStateIds": ["recent-change", "storage"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["변경 흔적이 짙다!", "느린 저장소가 쓰기 경로를 붙잡는다."],
+        "question": "무엇을 먼저 확인해 이 배포와의 연관성을 판단하시겠습니까?",
+        "candidateActionIds": ["change-trace", "scope-check", "dependency-check", "cause-split"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["읽기와 쓰기 영향 범위를 분리한다", "최근 migration이나 쿼리 변경을 먼저 대조한다"],
+        "commonMistakes": ["앱 서버만 본다", "무작정 DB 세션 kill부터 말한다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["조회는 대부분 정상인데 특정 쓰기 흐름만 막히고 있다."],
+        "question": "지금 어떤 복구 판단이 가장 안전하겠습니까?",
+        "candidateActionIds": ["rollback", "containment", "status-share", "call-support"],
+        "revealStateIds": ["recovery-window", "pressure"],
+        "idealReasoningPath": ["빠른 완화 수단이 있으면 복구를 우선한다", "롤백, 플래그 오프, 위험 기능 차단 중 안전한 수단을 고른다"],
+        "commonMistakes": ["원인 분석을 길게 하느라 복구를 늦춘다", "락 원인을 확인하지 않고 전체 재시작을 말한다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["잠금은 줄고 있지만 릴리즈 검증이 남아 있다."],
+        "question": "재발 방지를 위해 어떤 배포 원칙을 추가하시겠습니까?",
+        "candidateActionIds": ["postmortem", "observability-check", "change-trace", "status-share"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["expand-contract, 온라인 migration, 배포 전 검증 지표를 제안한다", "lock wait과 write latency 알람을 강화한다"],
+        "commonMistakes": ["다음엔 조심하겠다는 수준으로 끝낸다"]
+      }
+    ]
+  },
+  {
+    "id": "gradual-rollout-db-regression-01",
+    "title": "점진 롤아웃 후 DB 부하",
+    "archetype": "release-verification",
+    "companyFlavor": "commerce",
+    "introText": "점진 배포 면접관이 승부를 걸어왔다!",
+    "incidentBrief": "새 기능을 10%까지 열자 에러율은 낮지만 DB 부하와 응답 시간이 cohort별로 나빠지고 있습니다.",
+    "startingStateIds": ["recent-change", "pressure"],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "phase": "triage",
+        "narrationLines": ["변경 흔적이 남아 있다!", "겉보기에는 성공한 배포처럼 보인다."],
+        "question": "이 상황에서 가장 먼저 무엇을 확인하시겠습니까?",
+        "candidateActionIds": ["scope-check", "change-trace", "observability-check", "priority-call"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["cohort별 영향과 핵심 흐름 지표를 나눈다", "에러율 외에 latency와 query 패턴을 같이 본다"],
+        "commonMistakes": ["에러율이 낮으니 괜찮다고 본다", "전체 사용자 영향과 cohort 영향을 구분하지 않는다"]
+      },
+      {
+        "turnNumber": 2,
+        "phase": "decision",
+        "narrationLines": ["특정 cohort에서 query 수와 slow query 비중이 함께 오른다."],
+        "question": "지금 확대를 멈추고 어떤 대응을 하시겠습니까?",
+        "candidateActionIds": ["containment", "rollback", "status-share", "dependency-check"],
+        "revealStateIds": ["storage", "recovery-window"],
+        "idealReasoningPath": ["확대 중단이나 플래그 오프를 먼저 검토한다", "안정화 후 원인 검증과 재확대 기준을 분리한다"],
+        "commonMistakes": ["감으로 rollout을 계속 늘린다", "검증 기준 없이 일단 지켜보자고만 한다"]
+      },
+      {
+        "turnNumber": 3,
+        "phase": "stabilize",
+        "narrationLines": ["부하는 진정됐지만 배포 승인 기준을 다시 세워야 한다."],
+        "question": "앞으로 어떤 release verification 기준을 두시겠습니까?",
+        "candidateActionIds": ["observability-check", "postmortem", "status-share", "priority-call"],
+        "revealStateIds": [],
+        "idealReasoningPath": ["business KPI와 DB 지표를 함께 보는 롤아웃 기준을 만든다", "cohort별 관측과 자동 중단 조건을 제안한다"],
+        "commonMistakes": ["성공 기준이 추상적이다", "성능과 비즈니스 지표를 연결하지 못한다"]
+      }
+    ]
+  }
+]

@@ -1,0 +1,894 @@
+[
+  {
+    "id": "deploy-login-failure-01",
+    "title": "배포 직후 로그인 실패",
+    "theme": "배포와 변경",
+    "difficulty": "light",
+    "archetype": "deploy-regression",
+    "companyFlavor": "fintech-bank",
+    "opponentIntroLine": "토스뱅크풍 면접관이 승부를 걸어왔다!",
+    "openingGoalLine": "먼저 무엇을 확인할지 정하자",
+    "fullIncidentBrief": "평일 오전 8시 50분, 출근 피크 10분 전 배포가 끝난 뒤 모바일 앱 로그인 실패율이 1.8%에서 17.6%로 급증했습니다. 웹 로그인은 거의 정상이고, 앱 서버 CPU는 높지 않지만 인증 API timeout과 일부 신규 설정 반영 인스턴스에서 오류가 집중됩니다.",
+    "realismAnchors": {
+      "timeContext": "평일 오전 8시 50분, 출근 피크 10분 전, 배포 완료 12분 후",
+      "impactSurface": "모바일 앱 로그인과 그 뒤 재시도, CS 문의 증가",
+      "measurableSignals": [
+        "전체 로그인 실패율 1.8% -> 17.6%",
+        "iOS 최신 앱 버전 실패율 24%",
+        "인증 API timeout 비율 0.7% -> 11%",
+        "앱 서버 CPU 40% 이하로 안정적"
+      ],
+      "contradictoryClue": "웹 로그인은 대부분 정상이고 앱 서버 CPU도 높지 않으며 일부 pod만 신규 설정을 반영한 흔적이 있다.",
+      "constraint": "출근 피크 직전이라 로그인 지연 허용도가 낮고, 즉시 롤백은 가능하지만 일부 인스턴스에는 새 설정이 이미 반영되어 있다.",
+      "wrongMoveRisk": "근거 없는 전체 롤백은 설정 불일치와 세션 재로그인을 키우고, 무분별한 재시도 유도나 앱 서버 증설은 인증 의존성 부하만 더 높일 수 있다."
+    },
+    "startingStateIds": [
+      "recent-change",
+      "pressure",
+      "critical-impact"
+    ],
+    "openingRevealLines": [
+      "전장에 변경 흔적이 남아 있다!",
+      "배포가 끝난 지 12분, 모바일 로그인 실패율이 17.6%까지 치솟았다.",
+      "압박감이 전장을 조인다!",
+      "출근 피크가 다가와 지금은 빠른 우선순위 판단이 중요하다.",
+      "추가 징후가 포착됐다!",
+      "웹 로그인은 대부분 정상이고 앱 서버 CPU도 높지 않아 단순 과부하로 몰아가긴 이르다."
+    ],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "goalLine": "영향 범위와 첫 확인 대상을 정리하자",
+        "question": "이 상황에서 가장 먼저 무엇을 확인하시겠습니까? 무엇이 가장 크게 망가졌는지부터 답해보세요.",
+        "candidateActionIds": [
+          "scope-check",
+          "change-trace",
+          "observability-check",
+          "priority-call"
+        ],
+        "bestActionIds": [
+          "scope-check",
+          "change-trace"
+        ],
+        "strongAnswerPoints": [
+          "모바일 로그인 실패가 전체인지 특정 앱 버전이나 pod 그룹인지 먼저 세그먼트한다",
+          "로그인 외 가입, 결제 진입 같은 핵심 흐름까지 번졌는지 확인해 사용자 영향 범위를 정리한다",
+          "배포 시점과 장애 시작 시점을 빠르게 대조할 준비를 한다"
+        ],
+        "commonMistakes": [
+          "근거 없이 전체 롤백부터 말한다",
+          "사용자 영향 언급 없이 로그나 코드 디버깅으로만 들어간다"
+        ],
+        "revealLines": [],
+        "newStateIds": [],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 2,
+        "goalLine": "배포 연관성을 좁히고 안전한 완화 수단을 고르자",
+        "question": "배포 연관성이 강해 보입니다. 하지만 성급한 조치도 위험합니다. 지금 어떤 대응을 하시겠습니까?",
+        "candidateActionIds": [
+          "change-trace",
+          "rollback",
+          "observability-check",
+          "containment"
+        ],
+        "bestActionIds": [
+          "change-trace",
+          "rollback"
+        ],
+        "strongAnswerPoints": [
+          "오류 증가 시점과 배포 시점을 다시 대조하고 최신 앱 버전과 특정 pod 집중 여부를 본다",
+          "로그인 설정 변경부터 선택적으로 되돌리되 세션 충돌 리스크를 함께 확인한다",
+          "핵심 로그인 흐름 복구를 우선하면서도 성급한 전체 롤백은 피한다"
+        ],
+        "commonMistakes": [
+          "복구보다 근본 원인 분석만 길게 설명한다",
+          "부분 롤백 가능성이 있는데도 무조건 전체 재배포나 전체 롤백으로 간다"
+        ],
+        "revealLines": [
+          "추가 정보가 드러났다!",
+          "실패는 iOS 최신 앱 버전과 신규 설정이 반영된 pod 그룹에서 특히 심하다.",
+          "복구 창이 열렸다!",
+          "로그인 설정만 선택적으로 되돌릴 수 있지만 일부 세션 토큰 정책과 충돌할 수 있다.",
+          "흐린 로그가 끼어든다!",
+          "인증 API timeout과 config checksum 차이가 함께 관찰된다."
+        ],
+        "newStateIds": [
+          "recovery-window",
+          "low-observability"
+        ],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 3,
+        "goalLine": "남은 의존성 이슈를 분리하고 서비스 안정화 계획을 말하자",
+        "question": "이제 배포 이슈와 외부 의존성 이슈가 겹쳐 보입니다. 서비스를 안정화하고, 팀과 사용자에게는 어떻게 대응하시겠습니까?",
+        "candidateActionIds": [
+          "dependency-check",
+          "status-share",
+          "fallback",
+          "cause-split"
+        ],
+        "bestActionIds": [
+          "status-share",
+          "dependency-check"
+        ],
+        "strongAnswerPoints": [
+          "선택적 롤백 후 남은 실패를 외부 인증 지연과 내부 배포 이슈로 분리해서 본다",
+          "재시도 폭증을 막도록 앱 로그인 안내, CS 공유, 외부 인증사 협업을 병렬로 진행한다",
+          "앱 버전별 검증, config checksum 확인, synthetic check 보강 같은 재발 방지를 제시한다"
+        ],
+        "commonMistakes": [
+          "배포 가설이 흔들린 뒤에도 같은 가설만 고집한다",
+          "복구와 공지를 전혀 언급하지 않는다"
+        ],
+        "revealLines": [
+          "기존 가설이 흔들린다!",
+          "선택적 롤백 후 전체 실패율은 17.6%에서 6.4%로 내려갔지만 외부 인증 응답 지연은 여전히 남아 있다.",
+          "불만 누적이 시작됐다!",
+          "CS 문의는 4배로 늘었고 로그인 재시도로 인증 호출량도 다시 올라가고 있다.",
+          "묶인 회선이 드러났다!",
+          "외부 인증사 응답이 특정 구간에서 2초 이상 지연된다."
+        ],
+        "newStateIds": [
+          "dependency"
+        ],
+        "resolvedStateIds": [
+          "recent-change"
+        ],
+        "dimmedStateIds": [
+          "recovery-window"
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "afterTurn": 1,
+        "techniqueLabel": "되물림",
+        "flavorLine": "면접관의 되물림!",
+        "questionLine": "좋습니다. 그런데 최근 배포와의 관련성은 어떻게 빠르게 확인하시겠습니까?"
+      },
+      {
+        "afterTurn": 2,
+        "techniqueLabel": "되물림",
+        "flavorLine": "면접관의 되물림!",
+        "questionLine": "좋습니다. 그런데 선택적 롤백 뒤에도 실패율이 충분히 내려오지 않는다면, 다음 가설은 무엇입니까?"
+      },
+      {
+        "afterTurn": 3,
+        "techniqueLabel": "마지막 추궁",
+        "flavorLine": "면접관의 마지막 추궁!",
+        "questionLine": "재발 방지를 위해 한 가지만 먼저 보강한다면 무엇을 선택하시겠습니까? 가장 빨리 사고를 줄일 수 있는 것 하나만 고르세요."
+      }
+    ],
+    "finalCoaching": {
+      "strengths": [
+        "핵심 기능 장애에서 사용자 영향을 먼저 확인한 점이 좋습니다.",
+        "앱/웹, 버전, pod 그룹 차이로 증상을 세그먼트한 판단이 강합니다.",
+        "복구와 원인 분석의 순서를 나누고 새 정보에 맞춰 가설을 갱신했습니다."
+      ],
+      "misses": [
+        "첫 턴에서 사용자 영향과 세그먼트를 더 짧고 선명하게 끊어 말할 수 있습니다.",
+        "롤백은 범위, 조건, 세션 충돌 리스크를 함께 붙여 더 명확히 설명하면 좋습니다.",
+        "마지막에는 외부 인증 지연과 내부 배포 이슈를 더 분리해서 정리할 수 있습니다."
+      ],
+      "betterAnswerDirection": "사용자 영향 파악 -> 앱 버전·pod 그룹 세그먼트 -> 최근 변경 확인 -> 조건부 선택 롤백 -> 남은 외부 인증 지연 분리 -> 팀·CS·외부사 공유 순서로 답하면 더 강합니다."
+    }
+  },
+  {
+    "id": "traffic-spike-campaign-01",
+    "title": "트래픽 급증으로 DB 과부하",
+    "theme": "트래픽과 병목",
+    "difficulty": "standard",
+    "archetype": "traffic-spike",
+    "companyFlavor": "commerce",
+    "opponentIntroLine": "프로모션 시즌 면접관이 승부를 걸어왔다!",
+    "openingGoalLine": "핵심 사용자 경로와 병목 후보를 먼저 좁히자",
+    "fullIncidentBrief": "점심 프로모션 푸시 발송 5분 후, 홈 피드와 상품 상세 조회 트래픽이 평소의 8배까지 치솟았습니다. 메인 조회 API의 p95는 120ms에서 1.8s로 상승했고, 모바일 앱 사용자의 18%가 첫 화면 진입 이후 3초 넘게 기다리고 있습니다. 앱 서버 CPU는 40% 수준으로 높지 않지만 Aurora read latency는 35ms에서 780ms까지 뛰었고, read replica connection 수도 빠르게 차오르는 중입니다. 지금은 점심 피크 시간대라 홈 피드와 상품 상세를 오래 느리게 둘 수 없습니다.",
+    "realismAnchors": {
+      "timeContext": "평일 12시 05분, 마케팅 팀이 12시 정각에 30만 명 대상 푸시를 발송한 직후",
+      "impactSurface": "모바일 앱 홈 피드, 상품 상세 조회, 장바구니 진입 전 탐색 흐름",
+      "measurableSignals": [
+        "홈 피드 API p95 120ms -> 1.8s",
+        "상품 상세 API p95 180ms -> 2.4s",
+        "모바일 첫 화면 이탈률 6% -> 19%",
+        "Aurora read latency 35ms -> 780ms",
+        "read replica active connections 220 -> 890",
+        "캐시 hit rate 92% -> 61%"
+      ],
+      "contradictoryClue": "앱 서버 CPU는 40% 수준으로 높지 않고 주문/결제 쓰기 경로는 아직 정상이며 에러율보다 지연이 먼저 급증하고 있다.",
+      "constraint": "점심 피크 시간대라 사용자 체감 지연을 오래 방치하기 어렵고, 캠페인 배너와 랭킹 노출 때문에 캐시 TTL이 짧아져 있으며 광고 예산이 집행 중이라 유입 자체를 바로 끊기 어렵다.",
+      "wrongMoveRisk": "무분별한 앱 서버 scale-out은 DB read pressure만 더 올리고, 캐시 flush는 miss 폭증을 부르며, 홈 피드 전체 기능 중단은 전환율 급락과 CS 증가로 이어질 수 있다."
+    },
+    "startingStateIds": [
+      "overload",
+      "pressure",
+      "low-observability"
+    ],
+    "openingRevealLines": [
+      "전장에 과부하가 몰아친다!",
+      "점심 프로모션 푸시 이후 홈 피드와 상품 상세 조회 유입이 평소의 8배까지 치솟았다.",
+      "핵심 시간대다!",
+      "지금은 짧은 복구 시간 자체가 점수가 된다.",
+      "흐린 로그가 전장을 스친다!",
+      "앱 서버 CPU는 높지 않지만 read latency와 캐시 hit rate는 빠르게 무너지고 있다."
+    ],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "goalLine": "영향이 큰 읽기 경로와 병목 계층을 먼저 분리하자",
+        "question": "이 상황에서 가장 먼저 무엇을 확인하시겠습니까? 그리고 왜 그 순서가 지금 맞다고 보시나요?",
+        "candidateActionIds": [
+          "scope-check",
+          "priority-call",
+          "observability-check",
+          "cause-split"
+        ],
+        "bestActionIds": [
+          "scope-check",
+          "cause-split"
+        ],
+        "strongAnswerPoints": [
+          "홈 피드와 상품 상세처럼 유입 상단의 핵심 읽기 흐름이 어디까지 느려졌는지 먼저 본다",
+          "주문과 결제가 아직 정상인지 함께 봐서 영향 범위를 나눈다",
+          "앱 서버 자원, DB read latency, 캐시 hit rate를 같이 비교해 앱, 캐시, DB 중 병목을 분리한다"
+        ],
+        "commonMistakes": [
+          "앱 서버부터 늘리겠다고 하며 잘못된 계층을 먼저 건드린다",
+          "사용자 영향 없이 CPU, 메모리, 쿼리 이야기만 길게 한다"
+        ],
+        "revealLines": [],
+        "newStateIds": [],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 2,
+        "goalLine": "핫 경로를 완화하면서 위험한 조치를 피하자",
+        "question": "핫 경로가 조회성 read pressure와 캐시 미스에 동시에 물리고 있어 보입니다. 지금 어떤 완화 조치를 먼저 하시겠습니까? 그리고 어떤 조치는 오히려 위험할까요?",
+        "candidateActionIds": [
+          "containment",
+          "fallback",
+          "dependency-check",
+          "status-share"
+        ],
+        "bestActionIds": [
+          "containment",
+          "fallback"
+        ],
+        "strongAnswerPoints": [
+          "캠페인 랭킹, 개인화 추천 같은 비핵심 읽기 기능부터 임시 단순화해 DB read pressure를 줄인다",
+          "홈 피드와 상품 상세는 공통 캐시 응답이나 degraded mode로 유지한다",
+          "캐시 flush 같은 조치는 피하고 hot key 보호와 read-through 캐시를 우선 검토한다"
+        ],
+        "commonMistakes": [
+          "서비스 전체를 막자고 한다",
+          "슬로우 쿼리 확인 같은 진단만 말하고 즉시 완화가 없다",
+          "캐시를 비우거나 replica를 더 붙이면 끝난다고 단순화한다"
+        ],
+        "revealLines": [
+          "느린 저장소가 모습을 드러냈다!",
+          "상품 상세 API에서 특정 read query의 p95가 2.9초까지 치솟았다.",
+          "확산 조짐이 보인다!",
+          "홈 피드 fallback도 느려지기 시작해 탐색 흐름 전체가 흔들리고 있다.",
+          "추가 정보가 드러났다!",
+          "캐시 hit rate가 92%에서 61%로 떨어졌고 캠페인 랭킹 결과가 30초 TTL로 자주 재조회되고 있다."
+        ],
+        "newStateIds": [
+          "storage",
+          "spread"
+        ],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 3,
+        "goalLine": "복구 확인 지표와 재발 방지 우선순위를 정리하자",
+        "question": "서비스가 일단 버티기 시작했다면, 진짜로 복구됐다고 무엇으로 판단하시겠습니까? 그리고 다음 캠페인 때 같은 문제가 다시 와도 DB가 먼저 무너지지 않게 하려면 무엇을 바꾸시겠습니까?",
+        "candidateActionIds": [
+          "status-share",
+          "observability-check",
+          "cause-split",
+          "postmortem"
+        ],
+        "bestActionIds": [
+          "observability-check",
+          "postmortem"
+        ],
+        "strongAnswerPoints": [
+          "홈 피드와 상품 상세 p95, 첫 화면 이탈률, replica connection 수, 캐시 hit rate가 안정 구간에 들어왔는지 확인한다",
+          "이번 이슈를 전체 DB 용량 부족이 아니라 특정 조회 패턴과 짧은 TTL 설계, 캠페인 유입이 겹친 read pressure로 정리한다",
+          "이벤트 전용 캐시 전략, hot key 보호, 기능 강등 스위치, 읽기 경로 부하 테스트 기준과 마케팅팀 피크 유입 제어 기준을 보강한다"
+        ],
+        "commonMistakes": [
+          "다음엔 서버를 더 크게 준비하겠다고만 한다",
+          "복구 확인 없이 회고부터 말한다",
+          "사용자 공지나 내부 공유를 완전히 빼먹는다"
+        ],
+        "revealLines": [
+          "복구 창이 열렸다!",
+          "랭킹과 개인화 영역을 단순화한 뒤 홈 피드 p95가 620ms까지 내려왔다.",
+          "불만 누적이 남아 있다!",
+          "앱 리뷰와 CS에는 처음 화면이 너무 늦다는 불만이 쌓이고 있다.",
+          "가설 붕괴의 흔적도 남아 있다!",
+          "전체 DB 장애라기보다 특정 조회 패턴과 TTL 설계가 트래픽 급증에 취약했던 것으로 보인다."
+        ],
+        "newStateIds": [
+          "recovery-window",
+          "hypothesis-reset"
+        ],
+        "resolvedStateIds": [
+          "overload"
+        ],
+        "dimmedStateIds": [
+          "spread"
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "afterTurn": 1,
+        "techniqueLabel": "되물림",
+        "flavorLine": "면접관의 되물림!",
+        "questionLine": "앱 서버 CPU는 높지 않은데 read latency만 치솟고 있습니다. 이걸 근거로 무엇을 더 확인하면 캐시 문제인지, DB read pressure인지, 특정 조회 쿼리 문제인지 나눌 수 있습니까?"
+      },
+      {
+        "afterTurn": 2,
+        "techniqueLabel": "압박 연계",
+        "flavorLine": "면접관의 압박감이 짙어진다!",
+        "questionLine": "만약 degraded mode를 열어도 read latency가 충분히 내려오지 않는다면, 어떤 기능을 다음으로 희생하고 어떤 지표를 기준으로 그 결정을 내리시겠습니까? 반대로 절대 건드리지 않을 흐름은 무엇인가요?"
+      },
+      {
+        "afterTurn": 3,
+        "techniqueLabel": "마지막 되물림",
+        "flavorLine": "면접관의 마지막 되물림!",
+        "questionLine": "단순 증설 말고, 다음 주 같은 규모 캠페인이 다시 와도 홈 피드와 상품 상세의 read pressure가 DB에 바로 꽂히지 않게 만들 가장 현실적인 개선 한 가지를 꼽는다면 무엇입니까? 그리고 그걸 왜 1순위로 두시겠습니까?"
+      }
+    ],
+    "finalCoaching": {
+      "strengths": [
+        "핵심 사용자 흐름을 먼저 언급하고 주문/결제와 탐색 흐름을 분리한 점이 좋습니다.",
+        "DB 병목처럼 보여도 캐시 미스, 읽기 압력, 쿼리 패턴을 나눠 본 추론이 강합니다.",
+        "전체 차단보다 비핵심 기능 강등과 degraded mode 같은 현실적 완화책을 제시했습니다."
+      ],
+      "misses": [
+        "즉시 완화보다 진단 설명이 길어지면 점심 피크 제약을 충분히 반영하지 못해 보일 수 있습니다.",
+        "캐시 flush나 무작정 scale-out의 부작용을 더 선명하게 짚으면 답변이 강해집니다.",
+        "복구 확인 지표와 사용자 커뮤니케이션을 마지막에 더 명확히 붙일 수 있습니다."
+      ],
+      "betterAnswerDirection": "영향 파악 -> 병목 분리 -> 비핵심 기능 강등과 degraded mode로 완화 -> 복구 지표 확인 -> 조회 패턴·TTL·캐시 전략 개선 순서로 답하면 더 강합니다."
+    }
+  },
+  {
+    "id": "payment-timeout-peak-01",
+    "title": "결제 또는 외부 API 장애",
+    "theme": "결제와 의존성",
+    "difficulty": "standard",
+    "archetype": "payment-failure",
+    "companyFlavor": "fintech-bank",
+    "opponentIntroLine": "결제 도메인 면접관이 승부를 걸어왔다!",
+    "openingGoalLine": "먼저 무엇을 확인할지 정하자",
+    "fullIncidentBrief": "금요일 저녁 8시 12분, 프로모션 시작 7분 후 결제 성공률이 97.8%에서 71.4%까지 떨어졌습니다. 카드 결제 승인 단계 timeout 비율은 2%에서 28%로 치솟았고, 간편결제는 조금 느려졌지만 완전히 무너지진 않았습니다. 앱 서버 CPU는 40% 수준으로 안정적인데 외부 PG 응답 p95는 480ms에서 4.2초로 상승했고 내부 주문 저장 write latency도 35ms에서 620ms까지 같이 올라왔습니다. 지금은 하루 매출이 가장 큰 저녁 피크 시간대라 전체 결제를 오래 막기 어렵고, 성급한 재시도나 수동 재처리는 중복 결제 위험을 키울 수 있습니다. 이 상황에서 무엇을 먼저 확인하시겠습니까?",
+    "realismAnchors": {
+      "timeContext": "금요일 저녁 8시 12분, 프로모션 시작 7분 후",
+      "impactSurface": "모바일 앱 카드 결제 승인 흐름",
+      "measurableSignals": [
+        "결제 성공률 97.8% -> 71.4%",
+        "카드 승인 timeout 2% -> 28%",
+        "외부 PG p95 480ms -> 4.2초, 내부 write latency 35ms -> 620ms"
+      ],
+      "contradictoryClue": "앱 서버 CPU는 40% 수준으로 안정적인데 외부 PG와 내부 주문 저장 쓰기 지연은 함께 커지고 있다.",
+      "constraint": "저녁 피크 시간대라 전체 결제를 오래 차단하기 어렵다.",
+      "wrongMoveRisk": "무분별한 재시도나 성급한 수동 재처리는 중복 결제와 주문 누락을 만들 수 있다."
+    },
+    "startingStateIds": [
+      "dependency",
+      "critical-impact",
+      "pressure"
+    ],
+    "openingRevealLines": [
+      "묶인 회선이 전장을 조인다!",
+      "배포 7분 뒤 카드 결제 승인 단계 실패가 빠르게 늘고 있다.",
+      "급한 불이 번지고 있다!",
+      "외부 PG 응답과 내부 주문 저장 지연이 함께 커지고 있다.",
+      "핵심 시간대다!",
+      "지금은 피해 범위와 우선순위를 먼저 읽어야 한다."
+    ],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "goalLine": "먼저 무엇을 확인할지 정하자",
+        "question": "이 상황에서 가장 먼저 무엇을 확인하시겠습니까?",
+        "candidateActionIds": [
+          "scope-check",
+          "dependency-check",
+          "priority-call",
+          "observability-check"
+        ],
+        "bestActionIds": [
+          "scope-check",
+          "dependency-check"
+        ],
+        "strongAnswerPoints": [
+          "결제 실패가 모든 수단 공통인지 카드 승인 단계에 집중되는지 먼저 구분한다",
+          "외부 PG 지연과 내부 주문 저장 write path 병목을 분리해서 본다",
+          "중복 결제나 처리 불명확 요청 같은 정합성 리스크를 함께 확인한다"
+        ],
+        "commonMistakes": [
+          "영향 범위보다 원인 추정을 먼저 길게 말한다",
+          "외부 PG 지연과 내부 병목을 한 덩어리로 본다",
+          "피크 시간대 제약과 결제 정합성 리스크를 언급하지 않는다"
+        ],
+        "revealLines": [],
+        "newStateIds": [],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 2,
+        "goalLine": "지금 어떤 대응으로 피해를 줄일지 정하자",
+        "question": "이제 어떤 대응으로 피해를 줄이시겠습니까?",
+        "candidateActionIds": [
+          "fallback",
+          "containment",
+          "cause-split",
+          "status-share"
+        ],
+        "bestActionIds": [
+          "fallback",
+          "containment"
+        ],
+        "strongAnswerPoints": [
+          "위험한 카드 결제 경로나 과도한 재시도를 먼저 제한하고 대체 수단으로 유도한다",
+          "내부 write path와 재시도 큐 적체가 더 커지지 않도록 timeout과 재시도 정책을 조정한다",
+          "승인 여부가 불명확한 요청은 별도 추적 대상으로 분리한다"
+        ],
+        "commonMistakes": [
+          "근본 원인을 다 찾을 때까지 완화를 미룬다",
+          "외부사 문제라며 기다리기만 한다",
+          "실패 건 전체를 다시 돌리자고 말한다"
+        ],
+        "revealLines": [
+          "추가 정보가 드러났다!",
+          "카드 결제는 앱 버전 3.14.x 사용자에서 특히 실패율이 높고 웹 결제는 상대적으로 안정적이다.",
+          "외부 PG timeout이 늘어난 가운데 우리 서비스의 재시도 큐 길이도 4배로 늘고 있다."
+        ],
+        "newStateIds": [
+          "storage",
+          "uncertainty"
+        ],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 3,
+        "goalLine": "복구 후 무엇을 검증하고 바꿀지 정리하자",
+        "question": "복구 이후 어떤 검증과 후속 대응을 하시겠습니까?",
+        "candidateActionIds": [
+          "status-share",
+          "postmortem",
+          "observability-check",
+          "call-support"
+        ],
+        "bestActionIds": [
+          "status-share",
+          "postmortem"
+        ],
+        "strongAnswerPoints": [
+          "승인 성공/실패 로그와 주문 저장 결과를 대조해 중복 결제, 승인 누락, 후처리 누락을 검증한다",
+          "영향 고객 범위와 조치 계획을 고객센터와 내부 팀에 짧게 공유한다",
+          "PG 장애 감지, 재시도 상한, degraded mode 기준, reconciliation 지표를 보강한다"
+        ],
+        "commonMistakes": [
+          "부분 복구만 보며 정합성 검증을 빼먹는다",
+          "고객 신뢰 회복이나 공지 계획을 언급하지 않는다",
+          "재발 방지 대책이 막연하다"
+        ],
+        "revealLines": [
+          "복구 창이 흔들리며 열리고 있다!",
+          "카드 결제 일부 BIN 구간은 임시 비활성화가 가능하고 간편결제 유도 배너도 즉시 노출할 수 있다.",
+          "하지만 지난 12분간 실패한 요청 중 3.1%는 승인 여부가 아직 불명확하다."
+        ],
+        "newStateIds": [
+          "recovery-window"
+        ],
+        "resolvedStateIds": [],
+        "dimmedStateIds": [
+          "critical-impact"
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "afterTurn": 1,
+        "techniqueLabel": "되물림",
+        "flavorLine": "면접관의 되물림!",
+        "questionLine": "외부 PG 지연과 우리 쪽 재시도 적체가 함께 보인다면, 무엇을 먼저 완화하고 왜 그렇게 판단하시겠습니까?"
+      },
+      {
+        "afterTurn": 2,
+        "techniqueLabel": "압박",
+        "flavorLine": "면접관의 압박!",
+        "questionLine": "우회나 제한을 하더라도 승인 여부가 불명확한 요청과 중복 결제 의심 건은 어떻게 분리하고 관리하시겠습니까?"
+      },
+      {
+        "afterTurn": 3,
+        "techniqueLabel": "마무리",
+        "flavorLine": "면접관의 마지막 추궁!",
+        "questionLine": "다음 피크 시간에도 같은 패턴이 나오면, 가장 먼저 다시 확인할 지표와 복구 기준은 무엇입니까?"
+      }
+    ],
+    "finalCoaching": {
+      "strengths": [
+        "외부 의존성과 내부 write path 병목을 분리해서 본 답변이 강합니다.",
+        "결제에서는 복구 속도와 정합성을 함께 챙겨야 한다는 점을 잘 드러낼 수 있습니다."
+      ],
+      "misses": [
+        "중복 결제나 처리 불명확 요청을 별도 관리 대상으로 분리하지 않으면 답이 약해집니다.",
+        "피크 시간대 제약을 무시하고 전체 차단이나 전량 재시도를 먼저 말하면 감점됩니다."
+      ],
+      "betterAnswerDirection": "영향 범위 파악 -> 외부 PG와 내부 병목 분리 -> 위험 경로 제한과 우회 -> 승인/주문 정합성 검증 -> 재시도 상한과 reconciliation 강화 순서로 답하면 더 강합니다."
+    }
+  },
+  {
+    "id": "payment-postprocess-queue-01",
+    "title": "결제 후처리 큐 적체와 중복 리스크",
+    "theme": "결제와 의존성",
+    "difficulty": "standard",
+    "archetype": "async-postprocess",
+    "companyFlavor": "fintech-bank",
+    "opponentIntroLine": "정산 파이프라인 면접관이 승부를 걸어왔다!",
+    "openingGoalLine": "먼저 무엇을 구분할지 정하자",
+    "fullIncidentBrief": "토요일 저녁 7시 40분, 결제 승인 자체는 대부분 성공하지만 영수증 발행, 포인트 적립, 주문 상태 동기화 같은 후처리가 2분 이상 지연되기 시작했습니다. 후처리 큐 backlog는 평소 400건 수준에서 3만 2천 건까지 늘었고 consumer lag도 10초 이하에서 11분까지 커졌습니다. DLQ 유입량은 분당 0~5건 수준에서 420건까지 뛰었지만 외부 결제 승인 성공률은 아직 96% 이상입니다. 일부 사용자는 결제 직후 주문 내역이 비어 보이거나 포인트가 늦게 반영된다고 문의하고 있고, 지금은 프로모션 피크 시간대라 큐를 통째로 비우거나 무작정 재처리했다가 중복 적립과 상태 꼬임을 만들 위험이 있습니다. 이 상황에서 무엇을 먼저 확인하시겠습니까?",
+    "realismAnchors": {
+      "timeContext": "토요일 저녁 7시 40분, 프로모션 피크 시간대",
+      "impactSurface": "결제 직후 주문 내역, 영수증 발행, 포인트 적립, 주문 상태 반영",
+      "measurableSignals": [
+        "후처리 큐 backlog 400 -> 32,000",
+        "consumer lag 10초 이하 -> 11분",
+        "DLQ 유입량 0~5건/분 -> 420건/분, 후처리 p95 4초 -> 145초"
+      ],
+      "contradictoryClue": "결제 승인 자체는 96% 이상으로 유지되고 앱 서버 CPU도 55% 수준이라, 겉보기 장애와 달리 동기 승인과 비동기 후처리 분리가 핵심이다.",
+      "constraint": "피크 시간대라 후처리를 오래 미루기 어렵고 일부 후처리는 정산과 고객 공지에 연결되어 단순 생략이 어렵다.",
+      "wrongMoveRisk": "큐 purge나 전량 재처리, 무작정 consumer 증설은 중복 적립, 상태 역전, 알림 중복을 만들 수 있다."
+    },
+    "startingStateIds": [
+      "queue",
+      "critical-impact",
+      "pressure"
+    ],
+    "openingRevealLines": [
+      "대기열 정체가 길게 늘어진다!",
+      "후처리 큐 backlog가 3만 건을 넘겼다.",
+      "급한 불이 번지고 있다!",
+      "결제 직후 주문 내역이 비어 보인다는 문의가 빠르게 늘고 있다.",
+      "압박감이 전장을 조인다!",
+      "지금은 결제 실패와 후처리 지연을 정확히 구분해 말해야 한다."
+    ],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "goalLine": "먼저 무엇을 구분할지 정하자",
+        "question": "이 상황에서 가장 먼저 무엇을 구분하시겠습니까? 그리고 왜 그 순서가 중요하다고 보시나요?",
+        "candidateActionIds": [
+          "scope-check",
+          "priority-call",
+          "cause-split",
+          "dependency-check"
+        ],
+        "bestActionIds": [
+          "scope-check",
+          "cause-split"
+        ],
+        "strongAnswerPoints": [
+          "결제 승인 실패와 승인 이후 후처리 지연을 먼저 분리한다",
+          "주문 상태, 영수증, 포인트 적립 중 고객 신뢰에 가장 큰 영향을 주는 후처리를 우선순위로 나눈다",
+          "backlog 숫자를 서비스 영향과 CS 리스크로 번역해 설명한다"
+        ],
+        "commonMistakes": [
+          "결제 전체가 실패했다고 단정한다",
+          "어떤 후처리가 임계인지 구분하지 않는다",
+          "큐를 비우거나 재처리하자는 말을 너무 빨리 꺼낸다"
+        ],
+        "revealLines": [],
+        "newStateIds": [],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 2,
+        "goalLine": "지금 어떤 회복 조치와 보호 조치를 할지 정하자",
+        "question": "지금 어떤 회복 조치를 하시겠습니까? 다만 잘못 건드리면 중복 적립과 상태 꼬임이 생길 수 있습니다.",
+        "candidateActionIds": [
+          "change-trace",
+          "containment",
+          "status-share",
+          "call-support"
+        ],
+        "bestActionIds": [
+          "change-trace",
+          "containment"
+        ],
+        "strongAnswerPoints": [
+          "최근 설정 변경으로 처리량이 떨어진 consumer를 먼저 원복하거나 안전하게 조정한다",
+          "포인트 적립처럼 중복 처리 위험이 큰 후처리는 멱등성 검증 없이 재처리하지 않는다",
+          "임계 후처리 복구와 고객센터/운영팀 공유를 병행한다"
+        ],
+        "commonMistakes": [
+          "consumer만 늘리면 된다고 본다",
+          "실패 건 전체 재처리를 바로 제안한다",
+          "멱등성이나 duplicate event를 언급하지 않는다"
+        ],
+        "revealLines": [
+          "추가 정보가 드러났다!",
+          "포인트 적립 consumer가 최근 배포 후 배치 크기 설정 변경으로 처리량이 절반 이하로 떨어졌다.",
+          "같은 결제 ID로 이벤트가 두 번 이상 들어온 흔적도 보인다."
+        ],
+        "newStateIds": [
+          "recent-change",
+          "uncertainty"
+        ],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 3,
+        "goalLine": "안정화 후 무엇을 검증하고 바꿀지 정리하자",
+        "question": "서비스를 안정화한 뒤, 무엇을 검증하고 무엇을 바꾸시겠습니까?",
+        "candidateActionIds": [
+          "observability-check",
+          "postmortem",
+          "status-share",
+          "call-support"
+        ],
+        "bestActionIds": [
+          "postmortem",
+          "observability-check"
+        ],
+        "strongAnswerPoints": [
+          "결제 ID 기준으로 주문 상태, 영수증, 포인트 적립을 대조해 누락과 중복을 검증한다",
+          "멱등성 키, DLQ 기준, backlog와 lag 알람, replay safety 기준을 보강한다",
+          "고객센터와 운영팀에 수동 보정 대상과 문의 응대 기준을 공유한다"
+        ],
+        "commonMistakes": [
+          "backlog만 줄면 끝났다고 본다",
+          "누락/중복 검증을 빼먹는다",
+          "설정 변경 검증과 replay 기준을 남기지 않는다"
+        ],
+        "revealLines": [
+          "복구 창이 열렸다!",
+          "배치 크기를 조정하고 비임계 후처리를 잠시 늦추자 backlog 증가세는 멈췄다.",
+          "지난 15분간 처리된 결제 중 일부는 포인트 적립 여부와 주문 상태를 다시 검증해야 한다."
+        ],
+        "newStateIds": [
+          "recovery-window"
+        ],
+        "resolvedStateIds": [],
+        "dimmedStateIds": [
+          "queue"
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "afterTurn": 1,
+        "techniqueLabel": "되물림",
+        "flavorLine": "면접관의 되물림!",
+        "questionLine": "지연된 후처리 중 무엇을 먼저 살리고, 무엇은 잠시 늦춰도 된다고 보시나요?"
+      },
+      {
+        "afterTurn": 2,
+        "techniqueLabel": "안전선",
+        "flavorLine": "면접관의 압박!",
+        "questionLine": "재처리가 꼭 필요하다면, 어떤 기준으로 안전한 재처리 대상을 나누시겠습니까?"
+      },
+      {
+        "afterTurn": 3,
+        "techniqueLabel": "마무리",
+        "flavorLine": "면접관의 마지막 되물림!",
+        "questionLine": "다음에 같은 일이 나도 consumer를 늘리기 전에 가장 먼저 확인할 한 가지는 무엇입니까?"
+      }
+    ],
+    "finalCoaching": {
+      "strengths": [
+        "동기 승인과 비동기 후처리를 분리해서 보는 답변은 이 시나리오에서 특히 강합니다.",
+        "임계 후처리와 비임계 후처리를 나눠 고객 신뢰와 정합성을 함께 챙기면 점수가 높습니다."
+      ],
+      "misses": [
+        "큐 적체를 처리량 문제로만 보고 멱등성, duplicate event, replay safety를 빼먹으면 답이 약해집니다.",
+        "전량 재처리나 무작정 consumer 증설은 중복 적립과 상태 꼬임 리스크를 놓친 판단으로 보입니다."
+      ],
+      "betterAnswerDirection": "승인과 후처리 영향 구분 -> 임계 후처리 우선 복구 -> 멱등성 기준 아래 안전한 재처리 -> 결제 ID 대조 검증 -> backlog, lag, DLQ, 설정 변경 가드 강화 순서로 답하면 더 강합니다."
+    }
+  },
+  {
+    "id": "deploy-db-lockwait-01",
+    "title": "배포 직후 DB 락 대기",
+    "theme": "배포와 변경",
+    "difficulty": "standard",
+    "archetype": "deploy-db-lockwait",
+    "companyFlavor": "commerce",
+    "opponentIntroLine": "릴리즈 검증 면접관이 승부를 걸어왔다!",
+    "openingGoalLine": "먼저 무엇을 확인할지 정하자",
+    "fullIncidentBrief": "평일 오전 10시 18분, 배포 완료 8분 후부터 주문 수정과 주소 변경 같은 쓰기 API의 p95가 90ms에서 2.7초까지 치솟았습니다. 조회 API는 대부분 정상이고 앱 서버 CPU도 35% 수준인데, DB lock wait time과 blocked session 수만 빠르게 늘고 있습니다. 이번 배포에는 신규 인덱스 추가와 주문 메모 컬럼 확장 migration이 포함됐고, 일부 pod는 이미 새 쿼리 경로를 타고 있습니다. 지금은 오전 주문이 몰리는 시간대라 쓰기 기능을 오래 불안정하게 둘 수 없고, 성급한 전체 재시작이나 세션 kill은 더 큰 락 경합을 만들 수 있습니다. 이 상황에서 무엇을 먼저 확인하시겠습니까?",
+    "realismAnchors": {
+      "timeContext": "평일 오전 10시 18분, 배포 완료 8분 후, 오전 주문 변경 피크 시간대",
+      "impactSurface": "주문 수정, 배송지 변경, 결제 후 부가정보 저장 같은 쓰기 흐름",
+      "measurableSignals": [
+        "쓰기 API p95 90ms -> 2.7s",
+        "lock wait time 거의 0 -> 1.8s",
+        "blocked sessions 3 -> 147",
+        "deadlock count 분당 0 -> 11",
+        "앱 서버 CPU 35% 수준 유지"
+      ],
+      "contradictoryClue": "조회 API는 대부분 정상이고 DB connection 수도 아직 max를 꽉 채우지 않았는데 특정 쓰기 경로에서만 lock contention 신호가 강하다.",
+      "constraint": "오전 주문 변경이 몰리는 시간대라 쓰기 기능 불안정을 오래 둘 수 없고 일부 pod는 이미 새 스키마를 전제로 동작한다.",
+      "wrongMoveRisk": "세션을 무작정 kill하거나 앱만 성급히 롤백하면 재시도 폭증과 신구 스키마 불일치로 락 경합을 더 키울 수 있다."
+    },
+    "startingStateIds": [
+      "recent-change",
+      "storage",
+      "pressure"
+    ],
+    "openingRevealLines": [
+      "변경 흔적이 짙게 남아 있다!",
+      "배포 8분 뒤부터 특정 쓰기 API만 급격히 느려지고 있다.",
+      "느린 저장소가 발목을 잡는다!",
+      "lock wait time과 blocked session 수가 빠르게 늘고 있다.",
+      "압박감이 전장을 조인다!",
+      "주문 변경 흐름을 오래 막아둘 수는 없다."
+    ],
+    "turns": [
+      {
+        "turnNumber": 1,
+        "goalLine": "먼저 무엇을 확인할지 정하자",
+        "question": "이 상황에서 가장 먼저 무엇을 확인하시겠습니까? 그리고 왜 그 순서가 맞다고 보시나요?",
+        "candidateActionIds": [
+          "change-trace",
+          "scope-check",
+          "dependency-check",
+          "cause-split"
+        ],
+        "bestActionIds": [
+          "scope-check",
+          "change-trace",
+          "cause-split"
+        ],
+        "strongAnswerPoints": [
+          "조회와 쓰기 영향을 분리해 특정 write path 문제인지 먼저 좁힌다",
+          "느려진 쓰기 API가 공통으로 만지는 테이블과 쿼리 경로를 확인한다",
+          "배포 직후라는 단서를 활용해 migration, 인덱스 추가, 새 write 쿼리 경로와의 연관성을 대조한다",
+          "lock wait와 blocked session 증가를 근거로 전체 과부하보다 lock contention 가능성을 우선 본다"
+        ],
+        "commonMistakes": [
+          "앱 서버 증설부터 말한다",
+          "조회 영향도 확인하지 않고 전체 DB 장애로 단정한다",
+          "migration, 인덱스, query plan 변경을 언급하지 않는다",
+          "세션 kill이나 재시작을 너무 빨리 제안한다"
+        ],
+        "revealLines": [],
+        "newStateIds": [],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 2,
+        "goalLine": "지금 어떤 복구 판단을 할지 정하자",
+        "question": "원인이 최근 변경과 강하게 연결되어 보입니다. 지금 어떤 복구 판단을 하시겠습니까?",
+        "candidateActionIds": [
+          "rollback",
+          "containment",
+          "status-share",
+          "change-trace"
+        ],
+        "bestActionIds": [
+          "containment",
+          "rollback",
+          "status-share"
+        ],
+        "strongAnswerPoints": [
+          "원인 분석을 더 깊게 하기보다 lock을 유발하는 신규 write 경로를 먼저 끄거나 feature flag를 내려 부하를 줄인다",
+          "migration이 직접 경합을 키우면 일시 중단을 검토한다",
+          "앱과 스키마 호환성을 확인한 뒤 선택적 롤백이나 기능 차단으로 주문 변경 경로부터 안정화한다",
+          "복구 기준과 다음 확인 지표를 함께 짧게 공유한다"
+        ],
+        "commonMistakes": [
+          "앱 전체 롤백만 말한다",
+          "migration을 검증 없이 강제 종료한다",
+          "세션 kill로 해결하려 든다",
+          "복구 기준 없이 지켜보자고만 한다"
+        ],
+        "revealLines": [
+          "신규 주문 메모 컬럼을 채우는 update 쿼리에서 row lock 대기가 집중된다.",
+          "주문 메모 기능은 feature flag로 일부 끌 수 있고 migration 작업도 일시 중단은 가능하다.",
+          "구버전 pod는 비교적 정상인데 새 쿼리 경로를 탄 pod에서 지연이 더 심하다."
+        ],
+        "newStateIds": [
+          "recovery-window",
+          "critical-impact"
+        ],
+        "resolvedStateIds": [],
+        "dimmedStateIds": []
+      },
+      {
+        "turnNumber": 3,
+        "goalLine": "복구 확인과 재발 방지를 정리하자",
+        "question": "이제는 복구 확인과 재발 방지를 말해보세요. 다음 배포에서는 무엇을 바꾸시겠습니까?",
+        "candidateActionIds": [
+          "observability-check",
+          "postmortem",
+          "status-share",
+          "change-trace"
+        ],
+        "bestActionIds": [
+          "observability-check",
+          "postmortem",
+          "status-share"
+        ],
+        "strongAnswerPoints": [
+          "쓰기 API p95, lock wait time, blocked session 수, 재시도 요청 수가 안정 범위로 돌아왔는지 확인한다",
+          "주문 메모 기능 차단 후 회복 추세와 남은 고객 영향을 검증한다",
+          "신구 쿼리 경로와 migration이 겹치며 row update contention을 키운 원인을 정리한다",
+          "다음부터는 expand-contract, online migration, 배치 크기 제한, rollout 전 lock wait 관측 기준을 둔다",
+          "지연 중 두 번 제출된 요청 같은 2차 리스크도 사후 검증한다"
+        ],
+        "commonMistakes": [
+          "회복 지표 확인 없이 회고부터 말한다",
+          "다음엔 조심하겠다 수준으로 끝낸다",
+          "online migration이나 expand-contract 같은 구조적 개선이 없다",
+          "지연 중 발생한 2차 피해 검증을 빼먹는다"
+        ],
+        "revealLines": [
+          "주문 메모 기능을 끄자 lock wait time은 빠르게 줄고 쓰기 API p95도 420ms 수준까지 회복됐다.",
+          "핵심 문제는 신구 쿼리 경로와 migration이 겹치며 특정 row update contention을 키운 것이었다.",
+          "일부 요청은 지연 중 재시도로 두 번 제출된 흔적이 있어 사후 검증이 필요하다."
+        ],
+        "newStateIds": [],
+        "resolvedStateIds": [
+          "storage"
+        ],
+        "dimmedStateIds": [
+          "pressure",
+          "recent-change",
+          "critical-impact"
+        ]
+      }
+    ],
+    "followups": [
+      {
+        "afterTurn": 1,
+        "techniqueLabel": "되물림",
+        "flavorLine": "면접관의 되물림!",
+        "questionLine": "최근 변경과 연관이 있다면 앱 코드 변경과 DB migration 중 어느 쪽을 먼저 의심하고 어떻게 구분하시겠습니까?"
+      },
+      {
+        "afterTurn": 2,
+        "techniqueLabel": "되물림",
+        "flavorLine": "면접관의 되물림!",
+        "questionLine": "만약 앱 롤백은 가능하지만 migration은 이미 절반 진행된 상태라면 어떤 기준으로 롤백 여부를 결정하시겠습니까?"
+      },
+      {
+        "afterTurn": 3,
+        "techniqueLabel": "마지막 되물림",
+        "flavorLine": "면접관의 마지막 되물림!",
+        "questionLine": "배포 속도를 유지하면서도 이런 lock issue를 줄이려면 개발 프로세스나 배포 검증 기준 중 무엇을 가장 먼저 바꾸시겠습니까?"
+      }
+    ],
+    "finalCoaching": {
+      "strengths": [
+        "조회와 쓰기를 분리해 전체 과부하가 아니라 특정 write contention으로 좁혀 가는 답이 강합니다.",
+        "배포 직후라는 시점과 migration, 인덱스, 새 쿼리 경로를 연결하면 현실적인 추론으로 보입니다.",
+        "feature flag, migration pause, 선택적 롤백처럼 안전한 완화 수단을 말하면 복구 판단 점수가 올라갑니다."
+      ],
+      "misses": [
+        "DB가 느리니 서버를 늘리겠다는 식의 반응은 락 문제의 핵심을 비껴갑니다.",
+        "세션 kill이나 앱 전체 롤백을 부작용 설명 없이 말하면 위험한 대응으로 보입니다.",
+        "회복 지표와 중복 제출 같은 2차 리스크 검증이 빠지면 마무리 완성도가 떨어집니다."
+      ],
+      "betterAnswerDirection": "읽기/쓰기 분리 -> 최근 변경 대조 -> 안전한 완화 -> 앱/스키마 호환성 검증 -> 복구 지표 확인 -> 배포 원칙 개선 순서로 답하면 더 강합니다."
+    }
+  }
+]

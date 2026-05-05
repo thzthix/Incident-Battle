@@ -1,0 +1,128 @@
+[
+  {
+    "id": "pressure",
+    "category": "pressure",
+    "battleName": "압박감",
+    "shortDescription": "빠른 결론과 우선순위 판단이 요구된다.",
+    "interviewMeaning": "길게 설명하기보다 무엇부터 할지 먼저 말해야 한다.",
+    "strongActionIds": ["priority-call", "scope-check", "status-share"],
+    "tags": ["pressure", "time-window"]
+  },
+  {
+    "id": "follow-up",
+    "category": "pressure",
+    "battleName": "되물림",
+    "shortDescription": "방금 선택의 근거를 다시 설명해야 한다.",
+    "interviewMeaning": "선택 자체보다 이유를 분명히 말해야 점수가 오른다.",
+    "strongActionIds": ["state-assumption", "priority-call", "cause-split"],
+    "tags": ["pressure", "reasoning"]
+  },
+  {
+    "id": "uncertainty",
+    "category": "pressure",
+    "battleName": "흔들기",
+    "shortDescription": "조건이 모호해 가정을 분명히 해야 한다.",
+    "interviewMeaning": "확정적으로 말하기보다 확인할 정보와 분기를 함께 제시해야 한다.",
+    "strongActionIds": ["state-assumption", "observability-check", "scope-check"],
+    "tags": ["uncertainty", "low-observability"]
+  },
+  {
+    "id": "overload",
+    "category": "system",
+    "battleName": "과부하",
+    "shortDescription": "요청 폭증이나 자원 포화가 진행 중이다.",
+    "interviewMeaning": "병목과 영향 범위를 빠르게 분리해 봐야 한다.",
+    "strongActionIds": ["scope-check", "load-balance", "cause-split"],
+    "tags": ["overload", "impact"]
+  },
+  {
+    "id": "recent-change",
+    "category": "system",
+    "battleName": "변경 흔적",
+    "shortDescription": "최근 배포나 설정 변경의 영향이 의심된다.",
+    "interviewMeaning": "최근 변경과 장애 시작 시점을 먼저 대조해야 한다.",
+    "strongActionIds": ["change-trace", "rollback", "cause-split"],
+    "tags": ["recent-change", "deploy"]
+  },
+  {
+    "id": "low-observability",
+    "category": "system",
+    "battleName": "흐린 로그",
+    "shortDescription": "관측 정보가 부족해 판단이 늦어진다.",
+    "interviewMeaning": "추측만 하지 말고 로그, 메트릭, 알람을 먼저 정리해야 한다.",
+    "strongActionIds": ["observability-check", "scope-check", "state-assumption"],
+    "tags": ["low-observability", "uncertainty"]
+  },
+  {
+    "id": "storage",
+    "category": "system",
+    "battleName": "느린 저장소",
+    "shortDescription": "DB 또는 저장 계층 반응이 둔해졌다.",
+    "interviewMeaning": "느려진 계층과 영향을 받는 기능을 분리해서 판단해야 한다.",
+    "strongActionIds": ["dependency-check", "cause-split", "fallback"],
+    "tags": ["storage", "dependency"]
+  },
+  {
+    "id": "hypothesis-reset",
+    "category": "system",
+    "battleName": "가설 붕괴",
+    "shortDescription": "처음 세운 가설이 더 이상 맞지 않는다.",
+    "interviewMeaning": "새로운 정보에 맞춰 판단을 갱신해야 한다.",
+    "strongActionIds": ["cause-split", "observability-check", "state-assumption"],
+    "tags": ["hypothesis-reset", "uncertainty"]
+  },
+  {
+    "id": "dependency",
+    "category": "dependency",
+    "battleName": "묶인 회선",
+    "shortDescription": "외부 의존성 때문에 움직임이 제한된다.",
+    "interviewMeaning": "우리 시스템만 보지 말고 fallback과 격리를 같이 봐야 한다.",
+    "strongActionIds": ["dependency-check", "fallback", "call-support"],
+    "tags": ["dependency"]
+  },
+  {
+    "id": "queue",
+    "category": "dependency",
+    "battleName": "대기열 정체",
+    "shortDescription": "큐 적체나 승인 대기로 대응 속도가 떨어진다.",
+    "interviewMeaning": "임계 업무와 비임계 업무를 분리해서 먼저 흘려야 한다.",
+    "strongActionIds": ["priority-call", "load-balance", "call-support"],
+    "tags": ["queue", "buffer"]
+  },
+  {
+    "id": "critical-impact",
+    "category": "impact",
+    "battleName": "급한 불",
+    "shortDescription": "핵심 사용자 흐름 장애로 피해가 크다.",
+    "interviewMeaning": "기술적 호기심보다 복구와 영향 최소화가 먼저다.",
+    "strongActionIds": ["scope-check", "fallback", "status-share"],
+    "tags": ["impact", "customer"]
+  },
+  {
+    "id": "spread",
+    "category": "impact",
+    "battleName": "확산 조짐",
+    "shortDescription": "문제가 더 넓은 영역으로 번질 수 있다.",
+    "interviewMeaning": "blast radius를 줄이는 격리 판단이 중요하다.",
+    "strongActionIds": ["containment", "scope-check", "status-share"],
+    "tags": ["spread", "impact"]
+  },
+  {
+    "id": "recovery-window",
+    "category": "defense",
+    "battleName": "복구 창",
+    "shortDescription": "롤백이나 기능 플래그 같은 빠른 완화 수단이 있다.",
+    "interviewMeaning": "안전한 복구 수단이 보이면 과감히 활용할 수 있어야 한다.",
+    "strongActionIds": ["rollback", "fallback", "containment"],
+    "tags": ["recovery-window", "escape-route"]
+  },
+  {
+    "id": "buffer",
+    "category": "defense",
+    "battleName": "완충층",
+    "shortDescription": "캐시, 큐, 레플리카 같은 완충 자원이 존재한다.",
+    "interviewMeaning": "시스템 보호막을 적극 활용하는 판단이 좋다.",
+    "strongActionIds": ["load-balance", "fallback", "dependency-check"],
+    "tags": ["buffer", "escape-route"]
+  }
+]
