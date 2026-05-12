@@ -10,7 +10,9 @@ Incident Battle는 시나리오 질문 대응을 포켓몬식 전투 리듬으�
 
 ## 스크립트
 - `npm run dev`: 개발 서버 실행
+- `npm run typecheck`: 타입 체크만 실행
 - `npm run build`: 타입체크 + 프로덕션 빌드
+- `npm run preview`: 빌드 결과 로컬 미리보기
 
 ## 주요 문서
 - `AGENTS.md`: 작업 규칙
@@ -24,3 +26,14 @@ Incident Battle는 시나리오 질문 대응을 포켓몬식 전투 리듬으�
 1. `턴 인터랙션 패널` 경쟁 구현
 2. `결과 피드백 패널` 경쟁 구현
 3. `인트로 케이던스` polish
+
+## GitHub Pages 배포
+- 이 프로젝트는 `GitHub Pages` 기준으로 `base=/Incident-Battle/`가 설정돼 있다.
+- 자동 배포는 `main` 브랜치 push 시 실행된다.
+- 현재 브랜치에서 먼저 올려보고 싶으면 GitHub Actions에서 `Deploy to GitHub Pages` 워크플로를 수동 실행하면 된다.
+- Pages URL 예시: `https://thzthix.github.io/Incident-Battle/`
+
+### 배포 전 체크
+1. `npm run build`
+2. 필요하면 `npm run preview`로 로컬 미리보기
+3. `main`에 머지하거나 Actions 수동 실행
