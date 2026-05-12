@@ -561,6 +561,125 @@ textarea {
   color: var(--muted);
 }
 
+.result-panel {
+  gap: 18px;
+}
+
+.result-heading,
+.result-heading-copy {
+  display: grid;
+  gap: 10px;
+}
+
+.result-heading {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+}
+
+.result-score-badge {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(244, 194, 107, 0.24);
+  background:
+    linear-gradient(180deg, rgba(244, 194, 107, 0.12), rgba(255, 255, 255, 0.03)),
+    rgba(9, 18, 35, 0.9);
+}
+
+.result-hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  gap: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(244, 194, 107, 0.24);
+  background:
+    linear-gradient(180deg, rgba(244, 194, 107, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(9, 18, 35, 0.92);
+}
+
+.result-score-block,
+.result-summary-block {
+  display: grid;
+  gap: 10px;
+}
+
+.result-score-block {
+  align-content: start;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.result-score-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+}
+
+.result-score-value {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 10vw, 4rem);
+  line-height: 0.9;
+}
+
+.result-section-title {
+  color: var(--text);
+}
+
+.result-summary-copy,
+.result-direction-copy {
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.result-score-grid {
+  gap: 8px;
+}
+
+.result-score-grid span {
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.result-score-grid strong,
+.result-score-grid em {
+  font-style: normal;
+}
+
+.result-card-list {
+  gap: 12px;
+}
+
+.result-bullet-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.result-bullet-list li::marker {
+  color: var(--accent);
+}
+
+.result-direction-card {
+  gap: 12px;
+}
+
+.result-button-row {
+  margin-top: 4px;
+}
+
+.result-cta-copy {
+  text-align: center;
+}
+
 .incident-brief {
   padding-top: 10px;
   border-top: 1px solid var(--line);
@@ -593,5 +712,37 @@ textarea {
   .answer-help-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .result-hero-card {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .result-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .result-score-badge {
+    justify-items: start;
+  }
+
+  .result-score-block {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .result-score-value {
+    font-size: clamp(2.2rem, 12vw, 3.2rem);
+  }
+
+  .result-summary-copy,
+  .result-direction-copy,
+  .result-bullet-list {
+    font-size: 0.95rem;
+  }
+
+  .result-score-grid span {
+    padding: 7px 10px;
   }
 }
