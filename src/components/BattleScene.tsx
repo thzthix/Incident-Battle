@@ -39,15 +39,20 @@ export function BattleScene({
   onToggleBrief,
 }: BattleSceneProps) {
   const selectedAction = getSelectedAction(selectedActionId);
+  const isIntro = Boolean(dialogueLine);
+  const visibleStateIds = isIntro ? activeStateIds.slice(0, 3) : activeStateIds;
+  const hiddenStateCount = Math.max(activeStateIds.length - visibleStateIds.length, 0);
 
   return (
-    <section className="panel battle-scene-panel">
+    <section className={`panel battle-scene-panel ${isIntro ? 'is-intro' : ''}`}>
       <div className="hud-row">
         <div>
           <p className="eyebrow">Opponent HUD</p>
           <h2>{companyName} 면접관</h2>
           <p className="hud-subtitle">
-            {scenario.title} · Turn {Math.min((activeTurn?.turnNumber ?? 1), scenario.turns.length)} / {scenario.turns.length}
+            {isIntro
+              ? `${scenario.title} · Intro Sequence`
+              : `${scenario.title} · Turn ${Math.min((activeTurn?.turnNumber ?? 1), scenario.turns.length)} / ${scenario.turns.length}`}
           </p>
         </div>
         <div className="hud-badge">{scenario.difficulty}</div>
@@ -56,29 +61,40 @@ export function BattleScene({
       <div className="battle-stage">
         <div className="sprite-card opponent-sprite">INTERVIEWER</div>
         <div className="stage-center">
-          <div className="floating-label">{floatingLabel}</div>
-          <div className="state-chip-row">
-            {activeStateIds.map((stateId) => (
+          <div className={`floating-label ${isIntro ? 'is-intro' : ''}`}>{floatingLabel}</div>
+          {isIntro && (
+            <div className="intro-incident-card">
+              <span className="speaker-tag">SCENARIO</span>
+              <strong>{scenario.title}</strong>
+              <p>{scenario.openingGoalLine}</p>
+            </div>
+          )}
+          <div className={`state-chip-row ${isIntro ? 'is-intro' : ''}`}>
+            {visibleStateIds.map((stateId) => (
               <span key={stateId} className={`state-chip ${dimmedStateIds.includes(stateId) ? 'is-dimmed' : ''}`}>
                 {statesById[stateId]?.battleName ?? stateId}
               </span>
             ))}
+            {hiddenStateCount > 0 && <span className="state-chip is-more">+{hiddenStateCount}</span>}
           </div>
         </div>
         <div className="sprite-card player-sprite">{playerName}</div>
       </div>
 
-      <div className="dialogue-box">
+      <div className={`dialogue-box ${isIntro ? 'is-intro' : ''}`}>
         <div className="dialogue-topline">
-          <span className="speaker-tag">Dialogue</span>
+          <span className="speaker-tag">{isIntro ? 'INTRO' : 'Dialogue'}</span>
           <button type="button" className="text-button" onClick={onToggleBrief}>
             {showIncidentBrief ? '상황 접기' : '상황 다시 보기'}
           </button>
         </div>
         {dialogueLine ? (
-          <p className="dialogue-line">
-            <strong>{speakerLabel[dialogueLine.speaker]}:</strong> {dialogueLine.text}
-          </p>
+          <div className="intro-dialogue-stack">
+            <p className="intro-sequence-copy">질문볼에서 공개된 단서를 한 줄씩 읽고 첫 질문 전까지 전장을 정리합니다.</p>
+            <p className="dialogue-line">
+              <strong>{speakerLabel[dialogueLine.speaker]}:</strong> {dialogueLine.text}
+            </p>
+          </div>
         ) : (
           <div className="dialogue-stack">
             <p>

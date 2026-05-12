@@ -476,6 +476,10 @@ textarea {
   gap: 18px;
 }
 
+.battle-scene-panel.is-intro {
+  gap: 14px;
+}
+
 .hud-row {
   display: flex;
   justify-content: space-between;
@@ -519,6 +523,23 @@ textarea {
   justify-items: center;
 }
 
+.intro-incident-card {
+  width: min(100%, 280px);
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(244, 194, 107, 0.2);
+  background:
+    linear-gradient(180deg, rgba(244, 194, 107, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(9, 18, 35, 0.9);
+  display: grid;
+  gap: 6px;
+}
+
+.intro-incident-card p {
+  color: var(--muted);
+  margin: 0;
+}
+
 .floating-label {
   padding: 10px 16px;
   border-radius: 999px;
@@ -527,11 +548,21 @@ textarea {
   text-align: center;
 }
 
+.floating-label.is-intro {
+  max-width: 100%;
+  font-size: 0.92rem;
+}
+
 .state-chip-row,
 .score-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.state-chip-row.is-intro {
+  justify-content: center;
+  gap: 8px;
 }
 
 .state-chip,
@@ -549,6 +580,11 @@ textarea {
   opacity: 0.42;
 }
 
+.state-chip.is-more {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+}
+
 .dialogue-topline {
   display: flex;
   justify-content: space-between;
@@ -559,6 +595,22 @@ textarea {
 .dialogue-stack p,
 .resolution-card p {
   color: var(--muted);
+}
+
+.dialogue-box.is-intro {
+  gap: 12px;
+}
+
+.intro-dialogue-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.intro-sequence-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 
 .result-panel {
@@ -744,5 +796,51 @@ textarea {
 
   .result-score-grid span {
     padding: 7px 10px;
+  }
+
+  .battle-scene-panel.is-intro {
+    gap: 12px;
+  }
+
+  .battle-stage {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .sprite-card {
+    min-height: 112px;
+  }
+
+  .stage-center {
+    gap: 10px;
+  }
+
+  .floating-label.is-intro,
+  .intro-sequence-copy,
+  .dialogue-box.is-intro .dialogue-line {
+    font-size: 0.9rem;
+  }
+
+  .intro-incident-card {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .state-chip-row.is-intro {
+    justify-content: flex-start;
+  }
+
+  .state-chip-row.is-intro .state-chip {
+    max-width: 100%;
+    padding: 7px 10px;
+    font-size: 0.84rem;
+  }
+
+  .dialogue-box.is-intro {
+    padding: 16px;
+  }
+
+  .dialogue-box.is-intro .dialogue-topline .text-button {
+    text-align: left;
   }
 }
