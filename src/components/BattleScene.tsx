@@ -1,5 +1,5 @@
-import { actionsById, statesById } from '../gameContent';
-import type { ActionContent, DialogueLine, ScenarioContent, ScenarioTurn } from '../types';
+import { statesById } from '../gameContent';
+import type { ScenarioContent, ScenarioTurn } from '../types';
 
 type BattleSceneProps = {
   companyName: string;
@@ -9,21 +9,12 @@ type BattleSceneProps = {
   activeStateIds: string[];
   dimmedStateIds: string[];
   activeTurn: ScenarioTurn | null;
-  dialogueLine: DialogueLine | null;
-  selectedActionId: string;
-  showIncidentBrief: boolean;
-  onToggleBrief: () => void;
+  isIntro: boolean;
 };
 
-function getSelectedAction(selectedActionId: string): ActionContent | null {
-  return selectedActionId ? actionsById[selectedActionId] ?? null : null;
+function clampGauge(value: number) {
+  return Math.max(10, Math.min(100, value));
 }
-
-const speakerLabel: Record<DialogueLine['speaker'], string> = {
-  system: 'SYSTEM',
-  interviewer: 'INTERVIEWER',
-  coach: 'COACH',
-};
 
 export function BattleScene({
   companyName,
@@ -33,33 +24,65 @@ export function BattleScene({
   activeStateIds,
   dimmedStateIds,
   activeTurn,
-  dialogueLine,
-  selectedActionId,
-  showIncidentBrief,
-  onToggleBrief,
+  isIntro,
 }: BattleSceneProps) {
-  const selectedAction = getSelectedAction(selectedActionId);
-  const isIntro = Boolean(dialogueLine);
-  const visibleStateIds = isIntro ? activeStateIds.slice(0, 2) : activeStateIds;
+  const turnNumber = activeTurn?.turnNumber ?? 1;
+  const visibleStateIds = activeStateIds.slice(0, 3);
   const hiddenStateCount = Math.max(activeStateIds.length - visibleStateIds.length, 0);
+  const opponentGauge = clampGauge(92 - dimmedStateIds.length * 18 - Math.max(turnNumber - 1, 0) * 6);
+  const playerGauge = clampGauge(96 - Math.max(turnNumber - 1, 0) * 10);
 
   return (
     <section className={`panel battle-scene-panel ${isIntro ? 'is-intro' : ''}`}>
-      <div className="hud-row">
-        <div>
-          <p className="eyebrow">Opponent HUD</p>
-          <h2>{companyName} 면접관</h2>
-          <p className="hud-subtitle">
-            {isIntro
-              ? `${scenario.title} · Intro Sequence`
-              : `${scenario.title} · Turn ${Math.min((activeTurn?.turnNumber ?? 1), scenario.turns.length)} / ${scenario.turns.length}`}
-          </p>
-        </div>
-        <div className="hud-badge">{scenario.difficulty}</div>
-      </div>
+      <div className="battlefield-frame">
+        <div className="battlefield-sky" aria-hidden="true" />
+        <div className="battlefield-ground" aria-hidden="true" />
 
-      <div className="battle-stage">
-        <div className="sprite-card opponent-sprite">
+        <div className="battle-hud battle-hud-opponent">
+          <div className="battle-hud-topline">
+            <strong className="battle-species-name">{scenario.title}</strong>
+            <span className="battle-level">Lv50</span>
+          </div>
+          <div className="battle-hp-row">
+            <span className="battle-hp-label">HP</span>
+            <span className="battle-hp-track">
+              <span className="battle-hp-fill" style={{ width: `${opponentGauge}%` }} />
+            </span>
+          </div>
+          <p className="battle-hud-meta">{companyName} 면접관의 시나리오</p>
+        </div>
+
+        <div className="battle-hud battle-hud-player">
+          <div className="battle-hud-topline">
+            <strong className="battle-species-name">{playerName}</strong>
+            <span className="battle-level">Lv50</span>
+          </div>
+          <div className="battle-hp-row">
+            <span className="battle-hp-label">HP</span>
+            <span className="battle-hp-track">
+              <span className="battle-hp-fill is-player" style={{ width: `${playerGauge}%` }} />
+            </span>
+          </div>
+          <p className="battle-hud-meta">침착도 {playerGauge} / 100</p>
+        </div>
+
+        <p className="battle-opponent-trainer">{companyName} 면접관</p>
+
+        <div className="battle-status-rack" aria-label="현재 전장 상태">
+          {visibleStateIds.map((stateId) => (
+            <span key={stateId} className={`battle-status-chip ${dimmedStateIds.includes(stateId) ? 'is-dimmed' : ''}`}>
+              {statesById[stateId]?.battleName ?? stateId}
+            </span>
+          ))}
+          {hiddenStateCount > 0 && <span className="battle-status-chip is-more">+{hiddenStateCount}</span>}
+        </div>
+
+        <div className="battle-effect-banner">
+          <span className="battle-effect-label">FIELD</span>
+          <strong>{floatingLabel}</strong>
+        </div>
+
+        <div className="battle-platform battle-platform-opponent">
           {isIntro && (
             <div className="question-ball-sequence" aria-hidden="true">
               <span className="question-ball-trail" />
@@ -68,64 +91,16 @@ export function BattleScene({
               <span className="question-ball-impact" />
             </div>
           )}
-          INTERVIEWER
-        </div>
-        <div className="stage-center">
-          <div className={`floating-label ${isIntro ? 'is-intro' : ''}`}>{floatingLabel}</div>
-          {isIntro && (
-            <div className="intro-incident-card">
-              <span className="speaker-tag">SCENARIO</span>
-              <strong>{scenario.title}</strong>
-              <p>{scenario.openingGoalLine}</p>
-            </div>
-          )}
-          <div className={`state-chip-row ${isIntro ? 'is-intro' : ''}`}>
-            {visibleStateIds.map((stateId) => (
-              <span key={stateId} className={`state-chip ${dimmedStateIds.includes(stateId) ? 'is-dimmed' : ''}`}>
-                {statesById[stateId]?.battleName ?? stateId}
-              </span>
-            ))}
-            {hiddenStateCount > 0 && <span className="state-chip is-more">+{hiddenStateCount}</span>}
+          <div className="scenario-sprite">
+            <span className="scenario-sprite-core">?</span>
+            <span className="scenario-sprite-name">{scenario.title}</span>
+            <span className="scenario-sprite-role">SCENARIO</span>
           </div>
         </div>
-        <div className="sprite-card player-sprite">{playerName}</div>
-      </div>
 
-      <div className={`dialogue-box ${isIntro ? 'is-intro' : ''}`}>
-        <div className="dialogue-topline">
-          <span className="speaker-tag">{isIntro ? 'INTRO' : 'Dialogue'}</span>
-          <button type="button" className="text-button" onClick={onToggleBrief}>
-            {showIncidentBrief ? '상황 접기' : '상황 다시 보기'}
-          </button>
+        <div className="battle-platform battle-platform-player">
+          <div className="player-sprite-silhouette" aria-hidden="true" />
         </div>
-        {dialogueLine ? (
-          <div className="intro-dialogue-stack">
-            <p className="intro-sequence-copy">질문볼에서 공개된 단서를 한 줄씩 읽고 첫 질문 전까지 전장을 정리합니다.</p>
-            <p className="dialogue-line">
-              <strong>{speakerLabel[dialogueLine.speaker]}:</strong> {dialogueLine.text}
-            </p>
-          </div>
-        ) : (
-          <div className="dialogue-stack">
-            <p>
-              <strong>질문:</strong> {activeTurn?.question}
-            </p>
-            {selectedAction ? (
-              <p>
-                <strong>선택 기술:</strong> {selectedAction.label} · {selectedAction.battleFlavorText}
-              </p>
-            ) : (
-              <p>
-                <strong>목표:</strong> {activeTurn?.goalLine}
-              </p>
-            )}
-          </div>
-        )}
-        {showIncidentBrief && (
-          <div className="incident-brief">
-            <p>{scenario.fullIncidentBrief}</p>
-          </div>
-        )}
       </div>
     </section>
   );
