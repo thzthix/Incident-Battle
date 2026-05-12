@@ -59,7 +59,17 @@ export function BattleScene({
       </div>
 
       <div className="battle-stage">
-        <div className="sprite-card opponent-sprite">INTERVIEWER</div>
+        <div className="sprite-card opponent-sprite">
+          {isIntro && (
+            <div className="question-ball-sequence" aria-hidden="true">
+              <span className="question-ball-trail" />
+              <span className="question-ball-shadow" />
+              <span className="question-ball" />
+              <span className="question-ball-impact" />
+            </div>
+          )}
+          INTERVIEWER
+        </div>
         <div className="stage-center">
           <div className={`floating-label ${isIntro ? 'is-intro' : ''}`}>{floatingLabel}</div>
           {isIntro && (

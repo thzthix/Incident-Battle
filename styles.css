@@ -514,6 +514,8 @@ textarea {
   place-items: center;
   letter-spacing: 0.08em;
   background: rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
 }
 
 .stage-center {
@@ -521,6 +523,94 @@ textarea {
   align-content: center;
   gap: 14px;
   justify-items: center;
+}
+
+.question-ball-sequence {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.question-ball {
+  position: absolute;
+  top: 22px;
+  left: 16px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  background:
+    linear-gradient(180deg, rgba(244, 194, 107, 0.95) 0 48%, rgba(13, 19, 36, 0.95) 48% 100%);
+  box-shadow:
+    0 0 0 2px rgba(244, 194, 107, 0.12),
+    0 8px 16px rgba(0, 0, 0, 0.28);
+  animation: question-ball-arc 1500ms cubic-bezier(0.2, 0.7, 0.1, 1) infinite;
+  z-index: 2;
+}
+
+.question-ball::before,
+.question-ball::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.question-ball::before {
+  top: 50%;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.question-ball::after {
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 0 2px rgba(13, 19, 36, 0.7);
+}
+
+.question-ball-trail {
+  position: absolute;
+  top: 28px;
+  left: 12px;
+  width: 72px;
+  height: 2px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgba(244, 194, 107, 0), rgba(244, 194, 107, 0.45), rgba(244, 194, 107, 0));
+  filter: blur(1px);
+  animation: question-ball-trail 1500ms cubic-bezier(0.2, 0.7, 0.1, 1) infinite;
+  z-index: 1;
+}
+
+.question-ball-shadow {
+  position: absolute;
+  top: 74px;
+  left: 26px;
+  width: 24px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.24);
+  filter: blur(1px);
+  animation: question-ball-shadow 1500ms cubic-bezier(0.2, 0.7, 0.1, 1) infinite;
+  z-index: 0;
+}
+
+.question-ball-impact {
+  position: absolute;
+  top: 42px;
+  right: 18px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 2px solid rgba(244, 194, 107, 0.55);
+  opacity: 0;
+  animation: question-ball-impact 1500ms ease-out infinite;
+  z-index: 1;
 }
 
 .intro-incident-card {
@@ -743,6 +833,91 @@ textarea {
   color: var(--danger);
 }
 
+@keyframes question-ball-arc {
+  0% {
+    transform: translate(0, 0) scale(0.92);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  30% {
+    transform: translate(34px, -22px) scale(1);
+  }
+  58% {
+    transform: translate(84px, 8px) scale(1.02);
+    opacity: 1;
+  }
+  70% {
+    transform: translate(92px, 10px) scale(0.94);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(92px, 10px) scale(0.94);
+    opacity: 0;
+  }
+}
+
+@keyframes question-ball-trail {
+  0%,
+  8% {
+    opacity: 0;
+    transform: translateX(0) scaleX(0.2);
+  }
+  30% {
+    opacity: 0.9;
+    transform: translateX(22px) scaleX(0.9);
+  }
+  58% {
+    opacity: 0.35;
+    transform: translateX(72px) scaleX(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(72px) scaleX(1.05);
+  }
+}
+
+@keyframes question-ball-shadow {
+  0%,
+  8% {
+    opacity: 0;
+    transform: translateX(0) scale(0.8);
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateX(34px) scale(0.95);
+  }
+  58% {
+    opacity: 0.45;
+    transform: translateX(86px) scale(0.75);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(86px) scale(0.75);
+  }
+}
+
+@keyframes question-ball-impact {
+  0%,
+  56% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  64% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  82% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
 @media (max-width: 920px) {
   .app-shell {
     padding: 20px 14px 40px;
@@ -841,6 +1016,31 @@ textarea {
 
   .sprite-card {
     min-height: 96px;
+  }
+
+  .question-ball {
+    top: 18px;
+    left: 12px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .question-ball-trail {
+    top: 24px;
+    width: 56px;
+  }
+
+  .question-ball-shadow {
+    top: 58px;
+    left: 18px;
+    width: 18px;
+  }
+
+  .question-ball-impact {
+    top: 34px;
+    right: 12px;
+    width: 18px;
+    height: 18px;
   }
 
   .stage-center {
