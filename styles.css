@@ -730,6 +730,8 @@ textarea {
 
 .result-cta-copy {
   text-align: center;
+  max-width: 42ch;
+  margin: 0 auto;
 }
 
 .incident-brief {
@@ -742,6 +744,14 @@ textarea {
 }
 
 @media (max-width: 920px) {
+  .app-shell {
+    padding: 20px 14px 40px;
+  }
+
+  .app-grid {
+    gap: 14px;
+  }
+
   .title-panel,
   .theme-grid,
   .action-grid,
@@ -758,12 +768,23 @@ textarea {
     align-items: stretch;
   }
 
+  .panel-heading,
+  .result-heading-copy,
+  .result-summary-block,
+  .result-score-block {
+    gap: 8px;
+  }
+
   .action-card-topline,
   .section-topline,
   .turn-section-heading,
   .answer-help-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .hud-badge {
+    align-self: flex-start;
   }
 
   .result-hero-card {
@@ -798,36 +819,48 @@ textarea {
     padding: 7px 10px;
   }
 
+  .result-bullet-list {
+    gap: 8px;
+    padding-left: 16px;
+    line-height: 1.5;
+  }
+
+  .result-button-row .primary-button,
+  .result-button-row .secondary-button {
+    width: 100%;
+  }
+
   .battle-scene-panel.is-intro {
-    gap: 12px;
+    gap: 8px;
   }
 
   .battle-stage {
-    padding: 16px;
-    gap: 12px;
+    padding: 12px;
+    gap: 8px;
   }
 
   .sprite-card {
-    min-height: 112px;
+    min-height: 96px;
   }
 
   .stage-center {
-    gap: 10px;
+    gap: 8px;
   }
 
   .floating-label.is-intro,
   .intro-sequence-copy,
   .dialogue-box.is-intro .dialogue-line {
-    font-size: 0.9rem;
+    font-size: 0.86rem;
   }
 
   .intro-incident-card {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
   }
 
   .state-chip-row.is-intro {
     justify-content: flex-start;
+    gap: 6px;
   }
 
   .state-chip-row.is-intro .state-chip {
@@ -837,10 +870,50 @@ textarea {
   }
 
   .dialogue-box.is-intro {
-    padding: 16px;
+    padding: 12px;
   }
 
   .dialogue-box.is-intro .dialogue-topline .text-button {
     text-align: left;
+  }
+
+  .intro-incident-card p,
+  .intro-sequence-copy,
+  .dialogue-box.is-intro .dialogue-line {
+    line-height: 1.5;
+  }
+
+  .battle-scene-panel.is-intro .player-sprite {
+    display: none;
+  }
+
+  .dialogue-box.is-intro .incident-brief {
+    max-height: 160px;
+    overflow: auto;
+    padding-right: 4px;
+  }
+
+  .result-panel {
+    gap: 14px;
+  }
+
+  .result-hero-card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .result-score-block {
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .result-button-row {
+    gap: 8px;
+  }
+
+  .result-button-row .primary-button,
+  .result-button-row .secondary-button {
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 }

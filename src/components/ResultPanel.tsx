@@ -72,6 +72,16 @@ export function ResultPanel({ scenario, finalResult, onReplay, onReset }: Result
         </div>
       </div>
 
+      <div className="button-row result-button-row">
+        <button type="button" className="secondary-button" onClick={onReset}>
+          처음부터
+        </button>
+        <button type="button" className="primary-button" onClick={onReplay}>
+          같은 전장 다시 도전하기
+        </button>
+      </div>
+      <p className="helper-copy result-cta-copy">가장 약했던 축 하나만 의식해서 다시 말하면 체감이 가장 큽니다.</p>
+
       <div className="result-grid">
         <div className="resolution-card result-card-list">
           <div className="section-topline">
@@ -104,16 +114,6 @@ export function ResultPanel({ scenario, finalResult, onReplay, onReset }: Result
         </div>
         <p className="result-direction-copy">{finalResult.betterAnswerDirection}</p>
       </div>
-
-      <div className="button-row result-button-row">
-        <button type="button" className="secondary-button" onClick={onReset}>
-          처음부터
-        </button>
-        <button type="button" className="primary-button" onClick={onReplay}>
-          같은 전장 다시 도전하기
-        </button>
-      </div>
-      <p className="helper-copy result-cta-copy">가장 약했던 축 하나만 의식해서 다시 말하면 체감이 가장 큽니다.</p>
     </section>
   );
 }

@@ -40,7 +40,7 @@ export function BattleScene({
 }: BattleSceneProps) {
   const selectedAction = getSelectedAction(selectedActionId);
   const isIntro = Boolean(dialogueLine);
-  const visibleStateIds = isIntro ? activeStateIds.slice(0, 3) : activeStateIds;
+  const visibleStateIds = isIntro ? activeStateIds.slice(0, 2) : activeStateIds;
   const hiddenStateCount = Math.max(activeStateIds.length - visibleStateIds.length, 0);
 
   return (
