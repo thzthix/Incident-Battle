@@ -188,6 +188,11 @@ h3,
   transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
 }
 
+.action-panel {
+  display: grid;
+  gap: 16px;
+}
+
 .theme-card:hover,
 .action-card:hover,
 .theme-card.is-selected,
@@ -195,6 +200,70 @@ h3,
   transform: translateY(-1px);
   border-color: rgba(244, 194, 107, 0.52);
   background: var(--accent-soft);
+}
+
+.action-card {
+  align-content: start;
+  min-height: 168px;
+}
+
+.battle-action-card {
+  position: relative;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)),
+    rgba(8, 15, 29, 0.86);
+}
+
+.battle-action-card::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.battle-action-card.is-selected::after {
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(244, 194, 107, 0.45);
+}
+
+.action-card-topline,
+.section-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.action-slot {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+}
+
+.action-select-copy {
+  margin-top: auto;
+  color: var(--accent);
+  font-size: 0.84rem;
+}
+
+.action-card-cta {
+  margin-top: auto;
+  color: var(--accent);
+  font-size: 0.84rem;
 }
 
 .field,
@@ -253,7 +322,142 @@ textarea {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 18px;
+}
+
+.battle-button-row {
+  align-items: center;
+}
+
+.turn-guide-card,
+.selection-status-card,
+.submit-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.turn-guide-card {
+  gap: 14px;
+}
+
+.turn-guide-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.guide-step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  font-family: var(--font-display);
+  color: #0d1324;
+  background: var(--accent);
+}
+
+.turn-section-heading,
+.answer-help-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.selection-status-card.is-ready {
+  border-color: rgba(244, 194, 107, 0.4);
+  background: var(--accent-soft);
+}
+
+.answer-length {
+  color: var(--muted);
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.answer-length.is-valid {
+  color: var(--accent);
+}
+
+.submit-status-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.submit-card .button-row {
+  margin-top: 0;
+}
+
+.turn-dialogue-box {
+  gap: 12px;
+  padding: 18px 18px 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025)),
+    rgba(8, 15, 29, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.turn-goal-line {
+  color: var(--accent);
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+}
+
+.turn-callout {
+  font-size: clamp(1.02rem, 2vw, 1.2rem);
+  line-height: 1.5;
+}
+
+.turn-command-section,
+.response-console,
+.battle-resolution-card,
+.battle-selection-card,
+.battle-submit-card,
+.command-footer {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.turn-command-section,
+.response-console {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+    rgba(8, 15, 29, 0.86);
+}
+
+.battle-selection-card.is-ready,
+.battle-submit-card {
+  border-color: rgba(244, 194, 107, 0.18);
+}
+
+.battle-resolution-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02)),
+    rgba(8, 15, 29, 0.88);
+}
+
+.response-label {
+  font-weight: 600;
+}
+
+.reveal-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.command-footer {
+  background: transparent;
+  padding: 0;
+  border: 0;
 }
 
 .scenario-preview-card,
@@ -379,6 +583,14 @@ textarea {
   .button-row,
   .hud-row,
   .dialogue-topline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .action-card-topline,
+  .section-topline,
+  .turn-section-heading,
+  .answer-help-row {
     flex-direction: column;
     align-items: stretch;
   }
