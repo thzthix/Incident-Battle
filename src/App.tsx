@@ -137,7 +137,7 @@ function App() {
         )}
 
         {scenario && state.phase !== 'title' && state.phase !== 'setup' && state.phase !== 'theme_select' && (
-          <>
+          <div className="battle-layout">
             <BattleScene
               companyName={state.companyName}
               playerName={state.playerName}
@@ -146,10 +146,7 @@ function App() {
               activeStateIds={state.activeStateIds}
               dimmedStateIds={state.dimmedStateIds}
               activeTurn={activeTurn}
-              dialogueLine={state.phase === 'battle_intro' ? activeDialogueLine : null}
-              selectedActionId={state.selectedActionId}
-              showIncidentBrief={state.showIncidentBrief}
-              onToggleBrief={() => dispatch({ type: 'TOGGLE_INCIDENT_BRIEF' })}
+              isIntro={state.phase === 'battle_intro'}
             />
 
             {state.phase === 'final_result' && state.finalResult ? (
@@ -162,11 +159,15 @@ function App() {
             ) : (
               <TurnPanel
                 phase={state.phase}
+                scenario={scenario}
                 turn={activeTurn}
+                dialogueLine={state.phase === 'battle_intro' ? activeDialogueLine : null}
                 selectedActionId={state.selectedActionId}
                 answerText={state.answerText}
                 lastTurnResult={lastTurnResult}
                 currentFollowup={state.currentFollowup}
+                showIncidentBrief={state.showIncidentBrief}
+                onToggleBrief={() => dispatch({ type: 'TOGGLE_INCIDENT_BRIEF' })}
                 onAdvanceIntro={() => dispatch({ type: 'ADVANCE_INTRO' })}
                 onSelectAction={(actionId) => dispatch({ type: 'SELECT_ACTION', actionId })}
                 onAnswerChange={(value) => dispatch({ type: 'UPDATE_ANSWER', value })}
@@ -176,7 +177,7 @@ function App() {
                 onAdvanceStateUpdate={handleAdvanceStateUpdate}
               />
             )}
-          </>
+          </div>
         )}
       </div>
     </main>
